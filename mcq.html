@@ -1,0 +1,883 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Quiz - Stranger Things Edition</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #111111;
+            --input-bg: #000000;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --st-red: #ff3b3b;
+            --st-glow: #ff1f1f;
+            --border-color: #222;
+            --accent-green: #2ecc71;
+            --accent-yellow: #f5c518;
+            --accent-blue: #3498db;
+            --yt-red: #ff0000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            background-image: radial-gradient(circle at center, #1a0505 0%, #000000 90%);
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--st-red); }
+
+        /* --- Layout --- */
+        .container { 
+            max-width: 1000px;
+            margin: 0 auto; 
+            position: relative; 
+            z-index: 10; 
+        }
+        
+        .view-section { display: none; animation: fadeIn 0.6s ease; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Header Styles --- */
+        .st-header {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 4rem;
+            color: var(--st-red);
+            text-align: center; 
+            margin-bottom: 5px;
+            text-shadow: 0 0 15px rgba(255, 59, 59, 0.6);
+            line-height: 1.2;
+        }
+
+        .subtitle { 
+            text-align: center; 
+            color: var(--text-muted); 
+            margin-bottom: 3rem; 
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Global Card Styling --- */
+        .stat-card, .quiz-card, .diff-card, .schedule-container, .graph-wrapper, .perf-table-wrapper, .question-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover, .quiz-card:hover, .diff-card:hover {
+            border-color: #444;
+            transform: translateY(-2px);
+        }
+
+        /* --- Stats Row --- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--st-red), transparent);
+            opacity: 0.5;
+        }
+        .stat-num { font-size: 2rem; font-weight: 700; margin: 10px 0; font-family: 'Nunito', sans-serif; }
+        .stat-desc { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- Titles --- */
+        .section-title {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* --- Quiz Grid --- */
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        /* --- Difficulty Selection Grid --- */
+        .diff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .diff-card {
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid #333;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diff-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; font-family: 'Patrick Hand', cursive; }
+        .diff-sub { color: #888; font-size: 0.9rem; }
+        
+        .diff-easy { border-bottom: 4px solid var(--accent-green); }
+        .diff-easy:hover { background: rgba(46, 204, 113, 0.05); border-color: var(--accent-green); }
+        .diff-easy .diff-title { color: var(--accent-green); }
+
+        .diff-med { border-bottom: 4px solid var(--accent-yellow); }
+        .diff-med:hover { background: rgba(245, 197, 24, 0.05); border-color: var(--accent-yellow); }
+        .diff-med .diff-title { color: var(--accent-yellow); }
+
+        .diff-hard { border-bottom: 4px solid var(--st-red); }
+        .diff-hard:hover { background: rgba(255, 59, 59, 0.05); border-color: var(--st-red); }
+        .diff-hard .diff-title { color: var(--st-red); text-shadow: 0 0 10px rgba(255,59,59,0.3); }
+
+
+        /* --- Schedule Section --- */
+        .schedule-header {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem; 
+            color: #fff; 
+            margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .schedule-header i { color: var(--st-red); }
+
+        .schedule-list { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+
+        .schedule-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #0a0a0a;
+            border: 1px solid #333; 
+            padding: 1rem; 
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .schedule-item:hover { border-color: #555; }
+
+        .sched-date { color: var(--st-red); font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 4px; }
+        .sched-title { font-weight: 600; font-size: 1rem; color: #ddd; }
+        
+        .btn-gcal {
+            background: #1a1a1a; 
+            border: 1px solid #333; 
+            color: #aaa;
+            padding: 6px 15px; 
+            border-radius: 20px;
+            font-size: 0.8rem; 
+            cursor: pointer;
+            display: flex; align-items: center; gap: 6px; transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .btn-gcal:hover { 
+            border-color: #555; color: #fff; 
+        }
+        .google-icon { color: inherit; } 
+
+        /* --- Performance Table --- */
+        .perf-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        @media(min-width: 900px) { .perf-container { grid-template-columns: 2fr 1fr; } }
+
+        .perf-table-wrapper { overflow-x: auto; padding: 0; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 1.2rem; color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid #222; font-weight: 600;}
+        td { padding: 1.2rem; border-bottom: 1px solid #222; font-size: 0.95rem; color: #ccc; }
+        tr:last-child td { border-bottom: none; }
+        
+        .weak-tag { 
+            background: rgba(255, 59, 59, 0.15); 
+            color: var(--st-red); 
+            padding: 4px 10px; 
+            border-radius: 12px; 
+            font-size: 0.8rem; 
+            border: 1px solid rgba(255, 59, 59, 0.3);
+        }
+
+        /* --- Graph --- */
+        .graph-header { 
+            display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; 
+            color: #fff; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 1.2rem;
+        }
+        .graph-wrapper { min-height: 320px; display: flex; flex-direction: column; }
+        #studyChart { width: 100%; height: 100%; flex-grow: 1; }
+
+        /* --- Buttons --- */
+        .btn { padding: 12px 25px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; font-family: 'Nunito', sans-serif; }
+        
+        .btn-primary { 
+            background-color: var(--st-red); 
+            color: #fff; 
+            box-shadow: 0 0 15px rgba(255, 59, 59, 0.4);
+        }
+        
+        .btn-primary:hover { 
+            background-color: #ff4d4d; 
+            box-shadow: 0 0 25px rgba(255, 59, 59, 0.6); 
+            transform: translateY(-2px);
+        }
+        
+        .btn-back { 
+            background: transparent; 
+            border: none; 
+            color: #888; 
+            margin-bottom: 1.5rem; 
+            width: auto; 
+            padding-left: 0;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .btn-back:hover { color: var(--st-red); }
+
+        /* --- Quiz Interface --- */
+        .q-text { font-size: 1.2rem; margin-bottom: 1.5rem; color: #fff; font-weight: 600; }
+        
+        .option-label {
+            display: block; padding: 18px; margin-bottom: 12px; 
+            border: 1px solid #333; border-radius: 8px; 
+            cursor: pointer; transition: 0.2s; background: #0a0a0a; position: relative;
+            color: #ccc;
+        }
+        .option-label:hover { border-color: #555; color: #fff; }
+        
+        .option-label.selected { 
+            border-color: var(--st-red); 
+            background: rgba(255, 59, 59, 0.1); 
+            color: #fff;
+        }
+        
+        /* Styles for Results (Correct/Wrong) */
+        .option-label.correct-answer {
+            border-color: var(--accent-green) !important;
+            background: rgba(46, 204, 113, 0.15) !important;
+            color: #fff !important;
+        }
+        
+        .option-label.wrong-answer {
+            border-color: var(--st-red) !important;
+            background: rgba(255, 59, 59, 0.15) !important;
+            color: #fff !important;
+        }
+
+        .result-icon {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            font-size: 1.1rem;
+        }
+
+        .option-input { display: none; }
+
+        /* --- SOLUTION BOX STYLES --- */
+        .solution-box {
+            background: #1a1a1a;
+            border-left: 3px solid var(--st-red);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 8px 8px 0;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+        }
+        .solution-title {
+            color: var(--st-red);
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        .solution-text {
+            color: #ccc;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .btn-yt-small {
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+        }
+        .btn-yt-small:hover {
+            background: var(--yt-red);
+            border-color: var(--yt-red);
+        }
+        
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #111; border: 1px solid #333; padding: 3rem; border-radius: 12px;
+            text-align: center; max-width: 500px; width: 90%;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            animation: zoomIn 0.4s ease;
+        }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-title {
+            font-family: 'Patrick Hand', cursive; color: var(--st-red); font-size: 2.5rem; margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(255, 59, 59, 0.4);
+        }
+        .modal-msg { color: #ccc; margin-bottom: 2rem; line-height: 1.6; }
+        .score-display { font-size: 4rem; font-weight: 800; margin: 10px 0; color: #fff; font-family: 'Nunito', sans-serif; }
+
+        /* --- CLICK EFFECT STYLES --- */
+        .st-ripple {
+            position: fixed; width: 20px; height: 20px; border-radius: 50%;
+            background: transparent; border: 2px solid rgba(255, 59, 59, 0.8);
+            box-shadow: 0 0 10px #ff3b3b, 0 0 20px #ff3b3b, inset 0 0 10px #ff3b3b;
+            transform: translate(-50%, -50%) scale(0); pointer-events: none; z-index: 9999;
+            animation: rippleEffect 0.6s ease-out forwards;
+        }
+        @keyframes rippleEffect {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; border-width: 5px; }
+            100% { transform: translate(-50%, -50%) scale(4); opacity: 0; border-width: 0px; }
+        }
+        .st-spore {
+            position: fixed; width: 4px; height: 4px; background-color: #e5e5e5; border-radius: 50%;
+            pointer-events: none; z-index: 9998; box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+            animation: sporeFloat 0.8s ease-out forwards;
+        }
+        @keyframes sporeFloat {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="dashboard-view" class="view-section active">
+            <h1 class="st-header">Adaptive Quiz</h1>
+            <p class="subtitle">Enter the Upside Down of Knowledge</p>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--st-red)">24</div>
+                    <div class="stat-desc">Total Attempts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--accent-blue)">87%</div>
+                    <div class="stat-desc">Accuracy Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--accent-yellow)">5</div>
+                    <div class="stat-desc">Perfect Scores</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--accent-green)">B+</div>
+                    <div class="stat-desc">Overall Grade</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">
+                <i class="far fa-folder-open" style="color:var(--st-red)"></i>
+                Subject Assessments (Class 12)
+            </h2>
+            <div class="quiz-grid" id="dashboard-grid"></div>
+
+            <h2 class="section-title">
+                <i class="far fa-clock" style="color: var(--st-red);"></i>
+                Upcoming Assessments
+            </h2>
+            <div class="schedule-container">
+                <div class="schedule-list">
+                    <div class="schedule-item">
+                        <div>
+                            <span class="sched-date">Tomorrow, 10:00 AM</span>
+                            <span class="sched-title">Physics: Optics Final</span>
+                        </div>
+                        <button class="btn-gcal" onclick="addToGoogleCalendar('Physics Optics Final', '20260110T100000Z', '20260110T120000Z', 'Class 12 Physics Final Exam')">
+                            <i class="fab fa-google google-icon"></i>
+                            <span style="margin-left:5px">Remind Me</span>
+                        </button>
+                    </div>
+                    <div class="schedule-item">
+                        <div>
+                            <span class="sched-date">Jan 15, 2:00 PM</span>
+                            <span class="sched-title">Math: Integration Mock</span>
+                        </div>
+                        <button class="btn-gcal" onclick="addToGoogleCalendar('Math Integration Mock', '20260115T140000Z', '20260115T160000Z', 'Mock test for Integration chapter')">
+                            <i class="fab fa-google google-icon"></i>
+                            <span style="margin-left:5px">Remind Me</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 3rem;">
+                <i class="fas fa-chart-line" style="color: var(--st-red);"></i>
+                Performance Analysis
+            </h2>
+            <div class="perf-container">
+                <div class="perf-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Attempts</th>
+                                <th>Correct/Wrong</th>
+                                <th>Accuracy</th>
+                                <th>Weak Topics</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Mathematics</td><td>8</td><td>35 / 5</td><td style="color:var(--accent-green)">88%</td><td><span class="weak-tag">Integration</span></td></tr>
+                            <tr><td>Physics</td><td>6</td><td>20 / 10</td><td style="color:var(--accent-yellow)">66%</td><td><span class="weak-tag">Optics</span></td></tr>
+                            <tr><td>Chemistry</td><td>5</td><td>28 / 2</td><td style="color:var(--accent-green)">93%</td><td><span class="weak-tag">Electrochemistry</span></td></tr>
+                            <tr><td>Biology</td><td>5</td><td>24 / 6</td><td style="color:var(--accent-green)">80%</td><td><span class="weak-tag">Genetics</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="graph-wrapper">
+                    <div class="graph-header">Weekly Study Time</div>
+                    <canvas id="studyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="difficulty-view" class="view-section">
+            <button class="btn btn-back" onclick="goHome()">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+            <h1 class="st-header" style="font-size: 2.5rem;">Select Threat Level</h1>
+            <p class="subtitle" id="diff-subject-title">Subject</p>
+
+            <div class="diff-grid">
+                <div class="diff-card diff-easy" onclick="startLevel('Easy')">
+                    <div class="diff-title">Hawkins High</div>
+                    <div class="diff-sub">Easy Mode</div>
+                    <div style="margin-top:10px; color:#aaa; font-size:0.8rem;">Basic Concepts & Definitions</div>
+                </div>
+                <div class="diff-card diff-med" onclick="startLevel('Medium')">
+                    <div class="diff-title">The Upside Down</div>
+                    <div class="diff-sub">Medium Mode</div>
+                    <div style="margin-top:10px; color:#aaa; font-size:0.8rem;">Standard Problems & Application</div>
+                </div>
+                <div class="diff-card diff-hard" onclick="startLevel('Hard')">
+                    <div class="diff-title">Vecna's Curse</div>
+                    <div class="diff-sub">Hard Mode</div>
+                    <div style="margin-top:10px; color:#aaa; font-size:0.8rem;">Complex Logic & Numericals</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="quiz-view" class="view-section">
+            <button class="btn btn-back" onclick="backToDiff()">
+                <i class="fas fa-arrow-left"></i> Change Difficulty
+            </button>
+            <h1 id="quiz-subject-header" class="st-header" style="font-size: 2.5rem; text-align: left;">Subject</h1>
+            <p id="quiz-level-indicator" style="color:#888; margin-bottom: 2rem;">Level: ...</p>
+            
+            <form id="quiz-form">
+                <div id="questions-wrapper"></div>
+                <div style="text-align: right;">
+                    <button type="button" class="btn btn-primary" style="width: 200px;" onclick="submitQuiz()">
+                        <i class="fa-solid fa-paper-plane" style="margin-right:8px;"></i> Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="modal-title">Mission Report</h2>
+            <div id="modal-score-area"></div>
+            <p class="modal-msg" id="modal-message"></p>
+            <button class="btn btn-primary" onclick="closeModal()">Review Answers</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DATA (NESTED: Subject -> Difficulty -> Questions with Explanation & Video Placeholder) ---
+        const quizData = {
+            Mathematics: {
+                Easy: [
+                    { q: "If A is a matrix of order 3x3, then |3A| is equal to:", options: ["3|A|", "9|A|", "27|A|", "None"], correct: 2, explanation: "For a matrix of order n, |kA| = k^n|A|. Here n=3, so |3A| = 3^3|A| = 27|A|.", video: "#" },
+                    { q: "The derivative of constant function is:", options: ["1", "0", "Constant", "Undefined"], correct: 1, explanation: "The rate of change of a constant value is zero.", video: "#" },
+                    { q: "Integration of e^x is:", options: ["e^x", "e^2x", "x", "log x"], correct: 0, explanation: "e^x is the unique function whose derivative and integral are itself.", video: "#" },
+                    { q: "What is the degree of differential equation y' + y = 0?", options: ["0", "1", "2", "3"], correct: 1, explanation: "Degree is the power of the highest order derivative.", video: "#" },
+                    { q: "Probability of an impossible event is:", options: ["1", "0", "0.5", "-1"], correct: 1, explanation: "Impossible events can never occur, so probability is 0.", video: "#" }
+                ],
+                Medium: [
+                    { q: "If A² = A, find (I+A)³ - 7A.", options: ["A", "I - A", "I", "3A"], correct: 2, explanation: "Expand (I+A)³ using binomial theorem and substitute A²=A. The result simplifies to I.", video: "#" },
+                    { q: "Integral of dx / (x² + 2x + 2) is:", options: ["tan⁻¹(x+1) + C", "log(x+1) + C", "sin⁻¹(x+1)", "None"], correct: 0, explanation: "Complete the square: 1/((x+1)²+1). This is the form of tan⁻¹(x+1).", video: "#" },
+                    { q: "Probability of even prime on a die roll:", options: ["1/6", "1/2", "1/3", "0"], correct: 0, explanation: "The only even prime number is 2. So 1 favorable outcome out of 6.", video: "#" },
+                    { q: "Derivative of sin(x²) is:", options: ["cos(x²)", "2x cos(x²)", "2x sin(x²)", "-2x"], correct: 1, explanation: "Use chain rule: d/dx(sin(x²)) = cos(x²) * d/dx(x²) = 2x cos(x²).", video: "#" },
+                    { q: "Value of sin⁻¹(sin(2π/3)) is:", options: ["2π/3", "π/3", "4π/3", "π/6"], correct: 1, explanation: "Range of sin⁻¹ is [-π/2, π/2]. sin(2π/3) = sin(π-π/3) = sin(π/3). So answer is π/3.", video: "#" }
+                ],
+                Hard: [
+                    { q: "Find area bounded by y²=4ax and x²=4ay.", options: ["16a²/3", "8a²/3", "4a²/3", "16a²"], correct: 0, explanation: "Standard area formula for intersection of two parabolas is 16ab/3. Here a=b, so 16a²/3.", video: "#" },
+                    { q: "Maximum value of (1/x)^x is:", options: ["e", "e^(1/e)", "1", "0"], correct: 1, explanation: "Let y=(1/x)^x. Take log, differentiate, find critical point x=1/e. Substitute back to get e^(1/e).", video: "#" },
+                    { q: "If vectors a and b are orthogonal, then:", options: ["a.b = 0", "a x b = 0", "a+b = 0", "None"], correct: 0, explanation: "Dot product of perpendicular vectors is zero because cos(90) = 0.", video: "#" },
+                    { q: "Solution of dy/dx + y = e^-x is:", options: ["y = xe^-x + C", "y = e^-x + C", "y = x + C", "None"], correct: 0, explanation: "Linear Diff Eq. Integrating Factor is e^x. Solution is y(e^x) = ∫e^-x * e^x dx = ∫1 dx = x.", video: "#" },
+                    { q: "Shortest distance between lines r=a+λb and r=c+μd depends on:", options: ["(b x d).(c-a)", "b.d", "c.a", "Cross product only"], correct: 0, explanation: "Shortest distance formula involves the projection of the vector joining points on the cross product of direction vectors.", video: "#" }
+                ]
+            },
+            Physics: {
+                Easy: [
+                    { q: "SI unit of Electric Charge is:", options: ["Ampere", "Coulomb", "Volt", "Ohm"], correct: 1, explanation: "Coulomb (C) is the standard SI unit of charge.", video: "#" },
+                    { q: "Resistance of an ideal ammeter is:", options: ["Infinite", "Zero", "100 Ohm", "1 Ohm"], correct: 1, explanation: "Ideal ammeters should not affect current, so resistance must be zero.", video: "#" },
+                    { q: "Light is which type of wave?", options: ["Longitudinal", "Transverse", "Mechanical", "Static"], correct: 1, explanation: "Light is an electromagnetic wave, which is transverse in nature.", video: "#" },
+                    { q: "Focal length of plane mirror is:", options: ["0", "Infinity", "1", "-1"], correct: 1, explanation: "Parallel rays remain parallel after reflection, so focus is at infinity.", video: "#" },
+                    { q: "Charge on a neutron is:", options: ["+1.6x10^-19", "-1.6x10^-19", "Zero", "1"], correct: 2, explanation: "Neutrons are neutral particles found in the nucleus.", video: "#" }
+                ],
+                Medium: [
+                    { q: "Electric flux through a closed surface depends on:", options: ["Shape", "Size", "Charge Enclosed", "Location"], correct: 2, explanation: "Gauss's Law states Flux = q_enclosed / ε₀.", video: "#" },
+                    { q: "Interference is shown by:", options: ["Longitudinal", "Transverse", "Both", "Neither"], correct: 2, explanation: "Interference is a wave property shown by both sound (longitudinal) and light (transverse).", video: "#" },
+                    { q: "Hydrogen series in visible region:", options: ["Lyman", "Balmer", "Paschen", "Brackett"], correct: 1, explanation: "Balmer series corresponds to transitions to n=2, lying in the visible spectrum.", video: "#" },
+                    { q: "SI Unit of Magnetic Flux:", options: ["Tesla", "Weber", "Gauss", "Henry"], correct: 1, explanation: "Weber (Wb) is the SI unit. Tesla is for field strength.", video: "#" },
+                    { q: "A transformer works on:", options: ["DC", "AC", "Both", "Batteries"], correct: 1, explanation: "Transformers require changing magnetic flux, which is only provided by AC.", video: "#" }
+                ],
+                Hard: [
+                    { q: "Work done in rotating a dipole in electric field from 0 to 180 deg:", options: ["pE", "2pE", "0", "-pE"], correct: 1, explanation: "W = pE(cos 0 - cos 180) = pE(1 - (-1)) = 2pE.", video: "#" },
+                    { q: "If speed of light in medium is 2x10^8 m/s, Refractive Index is:", options: ["1.5", "1.33", "2.0", "1.0"], correct: 0, explanation: "μ = c/v = (3x10^8) / (2x10^8) = 1.5.", video: "#" },
+                    { q: "Phase difference in LCR series resonance circuit is:", options: ["0", "90", "180", "45"], correct: 0, explanation: "At resonance, XL = XC, so the circuit becomes purely resistive. Phase diff is 0.", video: "#" },
+                    { q: "Radius of path of electron in magnetic field depends on:", options: ["Mass only", "Velocity only", "Momentum/Charge", "None"], correct: 2, explanation: "r = mv/qB. It depends on momentum (mv) and charge (q).", video: "#" },
+                    { q: "Binding energy per nucleon is maximum for:", options: ["H", "Fe", "U", "He"], correct: 1, explanation: "Iron (Fe-56) has the most stable nucleus with max binding energy per nucleon.", video: "#" }
+                ]
+            },
+            Chemistry: {
+                Easy: [
+                    { q: "Formula of Rust is:", options: ["Fe2O3.xH2O", "FeO", "Fe3O4", "FeCO3"], correct: 0, explanation: "Rust is hydrated iron(III) oxide.", video: "#" },
+                    { q: "Which is a noble gas?", options: ["O", "N", "He", "Cl"], correct: 2, explanation: "Helium (He) has a full valence shell and is inert.", video: "#" },
+                    { q: "Molarity depends on:", options: ["Mass", "Volume", "Temperature", "Pressure"], correct: 2, explanation: "Molarity involves volume, and volume changes with temperature.", video: "#" },
+                    { q: "pH of pure water is:", options: ["0", "14", "7", "1"], correct: 2, explanation: "Pure water is neutral, so pH is 7.", video: "#" },
+                    { q: "Functional group of Alcohol:", options: ["-OH", "-CHO", "-COOH", "-CO-"], correct: 0, explanation: "-OH is the hydroxyl group representing alcohols.", video: "#" }
+                ],
+                Medium: [
+                    { q: "NaCl shows which defect?", options: ["Schottky", "Frenkel", "Both", "None"], correct: 0, explanation: "Schottky defect is common in ionic compounds with high coordination numbers like NaCl.", video: "#" },
+                    { q: "Oxidation of Ni in [Ni(CO)₄]:", options: ["+2", "0", "+4", "-2"], correct: 1, explanation: "CO is a neutral ligand (charge 0). So Ni oxidation state is 0.", video: "#" },
+                    { q: "Strongest acid:", options: ["HCOOH", "CH₃COOH", "ClCH₂COOH", "Cl₃CCOOH"], correct: 3, explanation: "Electron withdrawing groups (-Cl) increase acidity. Cl3CCOOH has 3 Cl atoms.", video: "#" },
+                    { q: "Unit of zero order rate constant:", options: ["mol L⁻¹ s⁻¹", "s⁻¹", "L mol⁻¹", "mol⁻¹"], correct: 0, explanation: "Rate = k[A]⁰ = k. So unit of k is unit of Rate (conc/time).", video: "#" },
+                    { q: "Which vitamin contains Cobalt?", options: ["Vit A", "Vit B12", "Vit C", "Vit D"], correct: 1, explanation: "Vitamin B12 is also known as Cyanocobalamin.", video: "#" }
+                ],
+                Hard: [
+                    { q: "Half life of a reaction is independent of initial conc. Order is:", options: ["0", "1", "2", "3"], correct: 1, explanation: "For 1st order, t1/2 = 0.693/k, which has no concentration term.", video: "#" },
+                    { q: "Product of Lucas Reagent test with tertiary alcohol:", options: ["Turbidity immediately", "No reaction", "Red Color", "Blue Color"], correct: 0, explanation: "Tertiary carbocations are stable, reacting instantly with Lucas Reagent.", video: "#" },
+                    { q: "Geometry of XeF4 is:", options: ["Tetrahedral", "Square Planar", "Octahedral", "Linear"], correct: 1, explanation: "Xe has 4 bonds and 2 lone pairs. Sp3d2 hybridization leads to Square Planar shape.", video: "#" },
+                    { q: "Which isomerism is shown by [Co(NH3)5SO4]Br?", options: ["Linkage", "Ionisation", "Coordination", "Optical"], correct: 1, explanation: "Exchange of ions inside and outside coordination sphere (SO4 vs Br) causes Ionisation isomerism.", video: "#" },
+                    { q: "In SN1 reaction, the intermediate is:", options: ["Carbocation", "Carbanion", "Free Radical", "Transition State"], correct: 0, explanation: "SN1 is a two-step process involving formation of a stable Carbocation.", video: "#" }
+                ]
+            },
+            Biology: {
+                Easy: [
+                    { q: "Powerhouse of the cell:", options: ["Nucleus", "Mitochondria", "Ribosome", "Golgi"], correct: 1, explanation: "Mitochondria generates ATP through respiration.", video: "#" },
+                    { q: "DNA stands for:", options: ["Deoxyribonucleic Acid", "Dual Nitrogen Acid", "Direct New Acid", "None"], correct: 0, explanation: "It is the molecule that carries genetic instructions.", video: "#" },
+                    { q: "Human heart has how many chambers?", options: ["2", "3", "4", "5"], correct: 2, explanation: "2 Atria and 2 Ventricles.", video: "#" },
+                    { q: "Unit of Kidney is:", options: ["Neuron", "Nephron", "Alveoli", "Villi"], correct: 1, explanation: "Nephron is the structural and functional filtration unit.", video: "#" },
+                    { q: "Universal Blood Donor:", options: ["A", "B", "AB", "O-"], correct: 3, explanation: "O Negative blood lacks A, B, and Rh antigens.", video: "#" }
+                ],
+                Medium: [
+                    { q: "Which is a restriction endonuclease?", options: ["Ligase", "Hind II", "Protease", "RNase"], correct: 1, explanation: "Hind II was the first restriction endonuclease discovered.", video: "#" },
+                    { q: "Megaspores formation process:", options: ["Megasporogenesis", "Microsporogenesis", "Parthenocarpy", "Apomixis"], correct: 0, explanation: "Formation of megaspores from megaspore mother cell is Megasporogenesis.", video: "#" },
+                    { q: "Antibody in colostrum:", options: ["IgG", "IgM", "IgA", "IgE"], correct: 2, explanation: "IgA provides passive immunity to the infant.", video: "#" },
+                    { q: "Golden Rice is rich in:", options: ["Omega 3", "Vitamin A", "Vitamin C", "Vitamin K"], correct: 1, explanation: "It is genetically modified to produce beta-carotene (Vitamin A precursor).", video: "#" },
+                    { q: "Leydig cells secrete:", options: ["Insulin", "Glucagon", "Androgens", "Estrogen"], correct: 2, explanation: "Leydig cells in testes produce Androgens (Testosterone).", video: "#" }
+                ],
+                Hard: [
+                    { q: "Which codon acts as Start Codon?", options: ["UAA", "UAG", "AUG", "UGA"], correct: 2, explanation: "AUG codes for Methionine and initiates translation.", video: "#" },
+                    { q: "PCR technique was invented by:", options: ["Kary Mullis", "Watson", "Crick", "Mendel"], correct: 0, explanation: "Kary Mullis developed Polymerase Chain Reaction in 1983.", video: "#" },
+                    { q: "Interaction where one benefits and other is harmed:", options: ["Mutualism", "Commensalism", "Parasitism", "Amensalism"], correct: 2, explanation: "Parasitism benefits the parasite at the expense of the host.", video: "#" },
+                    { q: "Pollen grains are stored in liquid nitrogen at:", options: ["0°C", "-100°C", "-196°C", "-273°C"], correct: 2, explanation: "Cryopreservation occurs at -196°C for long term storage.", video: "#" },
+                    { q: "Transcription occurs in:", options: ["Cytoplasm", "Nucleus", "Ribosome", "Golgi Body"], correct: 1, explanation: "DNA to mRNA transcription happens inside the Nucleus in eukaryotes.", video: "#" }
+                ]
+            }
+        };
+
+        const subjects = ["Mathematics", "Physics", "Chemistry", "Biology"];
+
+        // --- 2. RENDER DASHBOARD ---
+        const grid = document.getElementById('dashboard-grid');
+        subjects.forEach(sub => {
+            const card = document.createElement('div');
+            card.className = 'quiz-card';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3 style="font-size:1.4rem; color:#fff; font-weight:700;">${sub}</h3>
+                </div>
+                <p style="color:#888; margin-bottom:20px; font-size:0.95rem;">
+                    <i class="fa-solid fa-layer-group"></i> 3 Difficulty Levels
+                </p>
+                <button class="btn btn-primary" style="width:100%" onclick="showDifficultySelection('${sub}')">
+                    <i class="fa-solid fa-gamepad" style="font-size:0.8rem; margin-right:5px;"></i> Start Mission
+                </button>
+            `;
+            grid.appendChild(card);
+        });
+
+        // --- 3. STATE MANAGEMENT ---
+        let currentSubject = '';
+        let currentLevel = '';
+
+        // --- 4. VIEW TRANSITIONS ---
+        function showDifficultySelection(subject) {
+            currentSubject = subject;
+            document.getElementById('diff-subject-title').innerText = `Select Threat Level for ${subject}`;
+            
+            document.getElementById('dashboard-view').classList.remove('active');
+            document.getElementById('difficulty-view').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function startLevel(level) {
+            currentLevel = level;
+            const levelTitles = {
+                'Easy': 'Hawkins High (Easy)',
+                'Medium': 'The Upside Down (Medium)',
+                'Hard': 'Vecna\'s Curse (Hard)'
+            };
+
+            document.getElementById('quiz-subject-header').innerText = currentSubject;
+            document.getElementById('quiz-level-indicator').innerText = levelTitles[level];
+
+            document.getElementById('difficulty-view').classList.remove('active');
+            document.getElementById('quiz-view').classList.add('active');
+            window.scrollTo(0,0);
+
+            renderQuestions();
+        }
+
+        function renderQuestions() {
+            const wrapper = document.getElementById('questions-wrapper');
+            wrapper.innerHTML = '';
+
+            const questions = quizData[currentSubject][currentLevel];
+
+            questions.forEach((item, i) => {
+                const qNum = i + 1;
+                const div = document.createElement('div');
+                div.className = 'question-box';
+                div.dataset.index = i;
+                
+                const opts = item.options.map((opt, idx) => `
+                    <label class="option-label" onclick="selectOpt(this)">
+                        <input type="radio" name="q${qNum}" value="${idx}" class="option-input">
+                        ${opt}
+                    </label>
+                `).join('');
+
+                div.innerHTML = `
+                    <div class="q-text">Q${qNum}. ${item.q}</div>
+                    <div class="options-container">${opts}</div>
+                    <div class="solution-box" id="sol-${i}">
+                        <div class="solution-title"><i class="fa-solid fa-file-medical"></i> Mission Debrief</div>
+                        <div class="solution-text">${item.explanation}</div>
+                        <a href="${item.video}" target="_blank" class="btn-yt-small">
+                            <i class="fa-brands fa-youtube"></i> Watch Intel
+                        </a>
+                    </div>
+                `;
+                wrapper.appendChild(div);
+            });
+        }
+
+        function selectOpt(lbl) {
+            if(lbl.closest('.question-box').classList.contains('graded')) return;
+
+            const siblings = lbl.parentElement.querySelectorAll('.option-label');
+            siblings.forEach(s => s.classList.remove('selected'));
+            lbl.classList.add('selected');
+            lbl.querySelector('input').checked = true;
+        }
+
+        function submitQuiz() {
+            const questions = quizData[currentSubject][currentLevel];
+            let score = 0;
+            let total = questions.length;
+
+            questions.forEach((q, index) => {
+                const qNum = index + 1;
+                const selectedInput = document.querySelector(`input[name="q${qNum}"]:checked`);
+                const userChoice = selectedInput ? parseInt(selectedInput.value) : -1;
+                
+                const questionBox = document.querySelectorAll('.question-box')[index];
+                questionBox.classList.add('graded');
+                const options = questionBox.querySelectorAll('.option-label');
+
+                // Color the options
+                options.forEach((optLabel, optIdx) => {
+                    optLabel.classList.remove('selected');
+                    
+                    if (optIdx === q.correct) {
+                        optLabel.classList.add('correct-answer');
+                        optLabel.innerHTML += ` <i class="fa-solid fa-check result-icon" style="color:#fff;"></i>`;
+                    } else if (optIdx === userChoice && userChoice !== q.correct) {
+                        optLabel.classList.add('wrong-answer');
+                        optLabel.innerHTML += ` <i class="fa-solid fa-xmark result-icon" style="color:#fff;"></i>`;
+                    }
+                });
+
+                if (userChoice === q.correct) score++;
+
+                // SHOW SOLUTION BOX
+                const solBox = document.getElementById(`sol-${index}`);
+                solBox.style.display = 'block';
+            });
+
+            // Show Modal
+            const scoreArea = document.getElementById('modal-score-area');
+            const msgArea = document.getElementById('modal-message');
+            
+            let scoreColor = '#fff';
+            if(score === total) scoreColor = '#2ecc71';
+            else if(score < total / 2) scoreColor = '#ff3b3b';
+
+            scoreArea.innerHTML = `<div class="score-display" style="color:${scoreColor}">${score} / ${total}</div>`;
+            
+            if (score === total) {
+                msgArea.innerText = `Outstanding! You survived ${currentLevel} mode unscathed.`;
+            } else if (score > total / 2) {
+                msgArea.innerText = "Good work. Check the debriefs below to improve.";
+            } else {
+                msgArea.innerText = "The Mind Flayer got you. Study the intel below carefully.";
+            }
+
+            document.getElementById('success-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('success-modal').style.display = 'none';
+        }
+
+        function backToDiff() {
+            document.getElementById('quiz-view').classList.remove('active');
+            document.getElementById('difficulty-view').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function goHome() {
+            document.getElementById('difficulty-view').classList.remove('active');
+            document.getElementById('quiz-view').classList.remove('active');
+            document.getElementById('dashboard-view').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        // --- 5. GOOGLE CALENDAR & CHARTS (Preserved) ---
+        function addToGoogleCalendar(title, startISO, endISO, details) {
+            const baseUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
+            const url = `${baseUrl}&text=${encodeURIComponent(title)}&dates=${startISO}/${endISO}&details=${encodeURIComponent(details)}`;
+            window.open(url, '_blank');
+        }
+
+        function drawWeeklyChart() {
+            const canvas = document.getElementById('studyChart');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            const W = rect.width, H = rect.height;
+            const padLeft=40, padBottom=30, padRight=10, padTop=20;
+            const chartW = W-padLeft-padRight, chartH = H-padTop-padBottom;
+            const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+            const data = [4.5, 3.2, 5.1, 4.8, 6.2, 3.5, 2.8];
+            const maxVal = 8;
+
+            ctx.strokeStyle='#333'; ctx.lineWidth=1; ctx.setLineDash([5,5]);
+            ctx.font='12px Nunito'; ctx.fillStyle='#888'; ctx.textAlign='right';
+            for(let i=0; i<=4; i++) {
+                const yVal = i*2; 
+                const yPos = padTop + chartH - (yVal/maxVal*chartH);
+                ctx.beginPath(); ctx.moveTo(padLeft, yPos); ctx.lineTo(W-padRight, yPos); ctx.stroke();
+                ctx.fillText(yVal, padLeft-10, yPos+4);
+            }
+            ctx.textAlign='center';
+            const xStep = chartW/(labels.length-1);
+            labels.forEach((day,i)=>{
+                const xPos = padLeft+(i*xStep);
+                ctx.beginPath(); ctx.moveTo(xPos, padTop); ctx.lineTo(xPos, padTop+chartH); ctx.stroke();
+                ctx.fillText(day, xPos, H-10);
+            });
+            ctx.setLineDash([]);
+            const getPoint = (i) => ({x: padLeft+(i*xStep), y: padTop+chartH-(data[i]/maxVal*chartH)});
+            ctx.beginPath();
+            const start=getPoint(0); ctx.moveTo(start.x, start.y);
+            for(let i=0; i<data.length-1; i++) {
+                const p1=getPoint(i), p2=getPoint(i+1);
+                const midNextX=(p1.x+p2.x)/2, midNextY=(p1.y+p2.y)/2;
+                if(i===0) ctx.lineTo(p1.x, p1.y);
+                ctx.quadraticCurveTo(p1.x, p1.y, midNextX, midNextY);
+            }
+            const last=getPoint(data.length-1); ctx.lineTo(last.x, last.y);
+            const gradient=ctx.createLinearGradient(0,padTop,0,H);
+            gradient.addColorStop(0,'rgba(255, 59, 59, 0.5)'); gradient.addColorStop(1,'rgba(255, 59, 59, 0)');
+            ctx.save(); ctx.lineTo(last.x, padTop+chartH); ctx.lineTo(start.x, padTop+chartH); ctx.closePath();
+            ctx.fillStyle=gradient; ctx.fill(); ctx.restore();
+            ctx.beginPath(); ctx.moveTo(start.x, start.y);
+            for(let i=0; i<data.length-1; i++) {
+                const p1=getPoint(i), p2=getPoint(i+1);
+                const midNextX=(p1.x+p2.x)/2, midNextY=(p1.y+p2.y)/2;
+                ctx.quadraticCurveTo(p1.x, p1.y, midNextX, midNextY);
+            }
+            ctx.lineTo(last.x, last.y);
+            ctx.strokeStyle='#ff3b3b'; ctx.lineWidth=3; ctx.shadowColor='#ff3b3b'; ctx.shadowBlur=10;
+            ctx.stroke(); ctx.shadowBlur=0;
+        }
+
+        // --- 6. CLICK EFFECTS ---
+        document.addEventListener('DOMContentLoaded', () => { setTimeout(drawWeeklyChart, 100); });
+        window.addEventListener('resize', () => { setTimeout(drawWeeklyChart, 100); });
+        document.addEventListener('click', (e) => {
+            const x=e.clientX, y=e.clientY;
+            const ripple=document.createElement('div'); ripple.className='st-ripple';
+            ripple.style.left=`${x}px`; ripple.style.top=`${y}px`;
+            document.body.appendChild(ripple);
+            for(let i=0; i<8; i++){
+                const spore=document.createElement('div'); spore.className='st-spore';
+                spore.style.left=`${x}px`; spore.style.top=`${y}px`;
+                spore.style.setProperty('--dx', `${(Math.random()-0.5)*150}px`);
+                spore.style.setProperty('--dy', `${(Math.random()-0.5)*150}px`);
+                document.body.appendChild(spore); setTimeout(()=>spore.remove(),800);
+            }
+            setTimeout(()=>ripple.remove(),600);
+        });
+    </script>
+</body>
+</html>

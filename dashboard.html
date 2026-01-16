@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Thinkers - The Upside Down Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+   <style>
+   /* Container at the bottom */
+.deadline-setter-container {
+    background-color: #050505; /* Very dark background */
+    border-top: 3px solid #cc0000; /* Red neon border */
+    padding: 30px;
+    margin-top: 50px;
+    text-align: center;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace; /* Retro font */
+    box-shadow: 0 -5px 20px rgba(204, 0, 0, 0.3); /* Red glow */
+}
+
+.upside-down-title {
+    color: #cc0000;
+    text-shadow: 0 0 10px #ff0000;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+/* Flexbox for the inputs to sit side-by-side */
+.deadline-inputs {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.input-wrapper label {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+/* Input Styling */
+.deadline-inputs input {
+    background: #1a1a1a;
+    border: 1px solid #cc0000;
+    color: #fff;
+    padding: 10px 15px;
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+    border-radius: 4px;
+    transition: box-shadow 0.3s;
+}
+
+.deadline-inputs input:focus {
+    box-shadow: 0 0 15px rgba(204, 0, 0, 0.6);
+}
+
+/* Button Styling */
+.retro-btn {
+    background-color: #cc0000;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+    text-transform: uppercase;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    height: 46px; /* Match input height */
+}
+
+.retro-btn:hover {
+    background-color: #ff0000;
+    box-shadow: 0 0 20px #ff0000;
+    transform: scale(1.05);
+}
+
+.small-note {
+    font-size: 0.7rem;
+    color: #666;
+    margin-top: 15px;
+}
+   :root {
+    --bg-dark: #09090b; 
+    --bg-panel: #121216; 
+    --bg-panel-light: #1c1c24;
+    --primary-red: #ff2a2a; 
+    --glow-red: rgba(255, 42, 42, 0.6);
+    --text-main: #ffffff;
+    --text-muted: #9ca3af;
+    /* Font variables */
+    --font-header: 'Patrick Hand', cursive; 
+    --font-body: 'Montserrat', sans-serif;
+}
+
+/* Reset & Base Styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Background Texture */
+.upside-down-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.07'/%3E%3C/svg%3E");
+    z-index: -1; pointer-events: none;
+}
+
+/* --- Typography: Patrick Hand with Special Capitalization --- */
+.card-header h3,
+.page-title,
+.modal-header h2 {
+    font-family: var(--font-header);
+    text-transform: lowercase; /* 1. Force lowercase */
+    letter-spacing: 1px;
+}
+
+.card-header h3::first-letter,
+.page-title::first-letter,
+.modal-header h2::first-letter {
+    text-transform: uppercase; /* 2. Capitalize first letter */
+}
+
+.page-title {
+    font-size: 3.5rem;
+    color: var(--primary-red);
+    text-shadow: 0 0 15px var(--glow-red);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle { color: var(--text-muted); font-size: 1rem; }
+.accent-text { color: var(--primary-red); font-weight: 700; }
+.red-text { color: var(--primary-red); font-weight: bold; }
+
+/* Flicker Animations */
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 15px var(--primary-red); }
+    20%, 24%, 55% { opacity: 0.7; text-shadow: none; }
+}
+.flicker-text { animation: flicker 4s infinite alternate; }
+
+/* --- Layout & Cards --- */
+.main-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.dashboard-header { margin-bottom: 2rem; }
+
+.grid-section, .kpi-grid { display: grid; gap: 1.5rem; margin-bottom: 2rem; }
+.kpi-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.middle-grid { grid-template-columns: 2fr 1fr; }
+.bottom-grid { grid-template-columns: 1fr 1fr; }
+
+.card {
+    background: var(--bg-panel); border-radius: 16px; padding: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: border-color 0.3s;
+}
+.card:hover { border-color: rgba(255,42,42,0.3); }
+
+/* KPI Styling */
+.kpi-card { display: flex; justify-content: space-between; align-items: center; transform-style: preserve-3d; }
+.kpi-label { color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.5rem; }
+.kpi-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem; }
+.kpi-trend { font-size: 0.8rem; font-weight: 600; }
+.kpi-trend.positive { color: var(--primary-red); text-shadow: 0 0 5px var(--primary-red); }
+.icon-box {
+    width: 45px; height: 45px; border-radius: 12px;
+    background: rgba(255,255,255,0.05); color: var(--primary-red);
+    display: flex; align-items: center; justify-content: center;
+}
+.icon-box.red-glow { box-shadow: 0 0 15px rgba(255,42,42,0.2); }
+
+/* Section Headers */
+.card-header { display: flex; align-items: center; margin-bottom: 1.5rem; gap: 0.8rem; }
+.card-header h3 { font-size: 1.4rem; color: #fff; font-weight: normal; }
+.accent-icon { color: var(--primary-red); font-size: 1.4rem; text-shadow: 0 0 5px var(--primary-red); }
+
+/* Chart & Progress */
+.large-chart { height: 250px; }
+.progress-list { display: flex; flex-direction: column; gap: 1.2rem; }
+.prog-info { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.9rem; }
+.prog-bar-bg { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.prog-bar-fill.red { height: 100%; background: linear-gradient(90deg, var(--primary-red), #ff6b6b); box-shadow: 0 0 10px var(--primary-red); }
+
+/* --- Deadlines & Timetable Section --- */
+.google-sync-indicator {
+    font-size: 0.75rem; color: var(--text-muted); margin-top: -1rem; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 5px;
+}
+.deadline-list { display: flex; flex-direction: column; gap: 0.8rem; max-height: 300px; overflow-y: auto; }
+.deadline-list::-webkit-scrollbar { width: 5px; }
+.deadline-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+.deadline-item {
+    display: flex; align-items: center; background: var(--bg-panel-light);
+    padding: 0.8rem 1rem; border-radius: 12px; border-left: 3px solid transparent;
+}
+.deadline-item.assignment { border-left-color: #ff9f43; } 
+.deadline-item.exam { border-left-color: var(--primary-red); } 
+.deadline-item.class { border-left-color: #54a0ff; }
+
+.deadline-date-box {
+    display: flex; flex-direction: column; align-items: center;
+    padding-right: 1rem; margin-right: 1rem; border-right: 1px solid rgba(255,255,255,0.1);
+    min-width: 50px;
+}
+.dd-day { font-size: 1.1rem; font-weight: 700; }
+.dd-month { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); }
+.deadline-content { flex-grow: 1; }
+.deadline-content h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 2px; }
+.deadline-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 10px; }
+.deadline-item.cancelled { background: rgba(255, 42, 42, 0.05); opacity: 0.8; }
+.deadline-item.cancelled h4 { text-decoration: line-through; color: var(--text-muted); }
+.cancelled-tag { color: var(--primary-red); font-weight: bold; font-size: 0.75rem; text-transform: uppercase;}
+
+/* --- Task List --- */
+.task-list { display: flex; flex-direction: column; gap: 0.8rem; }
+.task-item {
+    display: flex; align-items: center; background: var(--bg-panel-light);
+    padding: 1rem; border-radius: 12px; cursor: pointer; position: relative; overflow: hidden;
+    border: 1px solid transparent; transition: 0.2s;
+}
+.task-item:hover { background: #23232c; }
+.task-item.completed { border-color: var(--primary-red); background: rgba(255,42,42,0.05); }
+.task-item .check-icon { margin-right: 1rem; color: var(--text-muted); transition: 0.3s; }
+.task-item.completed .check-icon { color: var(--primary-red); text-shadow: 0 0 8px var(--primary-red); }
+.task-content h4 { font-size: 0.95rem; font-weight: 500; }
+.task-content span { font-size: 0.8rem; color: var(--text-muted); }
+.task-item.completed h4 { text-decoration: line-through; color: var(--text-muted); }
+
+/* --- MAGICAL CLICK EFFECT --- */
+.magic-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid var(--primary-red);
+    box-shadow: 0 0 20px var(--primary-red), inset 0 0 20px var(--primary-red);
+    transform: scale(0);
+    animation: magic-ripple-anim 0.7s ease-out;
+    pointer-events: none;
+}
+
+@keyframes magic-ripple-anim {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(3); opacity: 0; border-width: 0px; }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .middle-grid, .bottom-grid { grid-template-columns: 1fr; }
+}</style>
+</head>
+<body>
+
+    <div class="upside-down-bg"></div>
+
+    <div class="main-container">
+        
+        <header class="dashboard-header">
+            <h1 class="page-title flicker-text">Dashboard</h1>
+            <p class="subtitle">Track your journey through the <span class="accent-text">Upside Down</span></p>
+        </header>
+
+        <div class="kpi-grid">
+            <div class="card kpi-card" data-tilt>
+                <div class="kpi-info">
+                    <span class="kpi-label">Study Time Today</span>
+                    <h2 class="kpi-value">4h 32m</h2>
+                    <span class="kpi-trend positive">+12%</span>
+                </div>
+                <div class="icon-box red-glow"><span class="material-icons-round">schedule</span></div>
+            </div>
+            <div class="card kpi-card" data-tilt>
+                <div class="kpi-info">
+                    <span class="kpi-label">Tasks Completed</span>
+                    <h2 class="kpi-value">8/12</h2>
+                    <span class="kpi-trend positive">+3</span>
+                </div>
+                <div class="icon-box red-glow"><span class="material-icons-round">check_circle</span></div>
+            </div>
+            <div class="card kpi-card" data-tilt>
+                <div class="kpi-info">
+                    <span class="kpi-label">Current Streak</span>
+                    <h2 class="kpi-value">7 days</h2>
+                    <span class="kpi-trend positive">🔥</span>
+                </div>
+                <div class="icon-box red-glow"><span class="material-icons-round">whatshot</span></div>
+            </div>
+            <div class="card kpi-card" data-tilt>
+                <div class="kpi-info">
+                    <span class="kpi-label">Weekly Progress</span>
+                    <h2 class="kpi-value">85%</h2>
+                    <span class="kpi-trend positive">+5%</span>
+                </div>
+                <div class="icon-box red-glow"><span class="material-icons-round">trending_up</span></div>
+            </div>
+        </div>
+
+        <div class="grid-section middle-grid">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <span class="material-icons-round accent-icon">calendar_today</span>
+                    <h3>Weekly Study Time</h3>
+                </div>
+                <div class="chart-container large-chart">
+                    <canvas id="studyTimeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card progress-card">
+                <div class="card-header">
+                    <span class="material-icons-round accent-icon">menu_book</span>
+                    <h3>Subject Progress</h3>
+                </div>
+                <div class="progress-list">
+                    <div class="progress-item">
+                        <div class="prog-info"><span>Mathematics</span><span class="red-text">78%</span></div>
+                        <div class="prog-bar-bg"><div class="prog-bar-fill red" style="width: 78%"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="prog-info"><span>Physics</span><span class="red-text">65%</span></div>
+                        <div class="prog-bar-bg"><div class="prog-bar-fill red" style="width: 65%"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="prog-info"><span>Chemistry</span><span class="red-text">82%</span></div>
+                        <div class="prog-bar-bg"><div class="prog-bar-fill red" style="width: 82%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-section bottom-grid">
+            
+            <div class="card deadline-card">
+                <div class="card-header">
+                    <span class="material-icons-round accent-icon">event_busy</span>
+                    <h3>Upcoming & Timetable</h3>
+                </div>
+                <div class="google-sync-indicator">
+                    <span class="material-icons-round" style="font-size: 1rem;">sync</span> Synced with Google Calendar
+                </div>
+                <div class="deadline-list" id="deadlineListContainer">
+                    </div>
+            </div>
+
+            <div class="card task-list-card">
+                <div class="card-header">
+                    <span class="material-icons-round accent-icon">task_alt</span>
+                    <h3>Recent Tasks</h3>
+                </div>
+                <div class="task-list" id="taskListContainer">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <script>document.addEventListener("DOMContentLoaded", () => {
+    // Initialize external libraries
+    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+        max: 15, speed: 400, glare: true, "max-glare": 0.2,
+    });
+
+    // Initialize components
+    initStudyChart();
+    renderTasks();
+    renderDeadlines(); 
+});
+
+// --- UPDATED DATA FOR JANUARY 2026 ---
+// Javascript counts months from 0 (0 = Jan, 1 = Feb, etc.)
+const googleCalendarData = [
+    { 
+        id: 'e1', type: 'assignment', title: 'Hackathon Prototype', 
+        date: new Date(2026, 0, 3, 23, 59), // Jan 3, 2026 (Tomorrow)
+        course: 'Project' 
+    },
+    { 
+        id: 'e2', type: 'class', title: 'Data Structures Lecture', 
+        date: new Date(2026, 0, 5, 9, 30), // Jan 5, 2026 (Monday)
+        course: 'CS201', location: 'Hall A'
+    },
+    { 
+        id: 'e3', type: 'class', title: 'Advanced Physics Lab', 
+        date: new Date(2026, 0, 5, 14, 0), // Jan 5, 2026 (Monday)
+        course: 'PH301', location: 'Lab 2',
+        isCancelled: true // Shows as cancelled
+    },
+    { 
+        id: 'e4', type: 'exam', title: 'Calculus Quiz', 
+        date: new Date(2026, 0, 6, 11, 0), // Jan 6, 2026 (Tuesday)
+        course: 'MA102', location: 'Room 304' 
+    }
+];
+
+// --- Chart Data ---
+const studyData = {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    data: [4.5, 3.2, 5.1, 4.8, 6.2, 3.5, 2.8]
+};
+
+// --- Task Data ---
+const recentTasks = [
+    { id: 1, title: "Complete Chapter 5 Problems", subject: "Mathematics", completed: true },
+    { id: 2, title: "Review Thermodynamics Notes", subject: "Physics", completed: true },
+    { id: 3, title: "Organic Chemistry Practice", subject: "Chemistry", completed: false },
+    { id: 4, title: "Biology Lab Report", subject: "Biology", completed: false }
+];
+
+
+// =========================================
+// RENDER FUNCTIONS
+// =========================================
+
+function renderDeadlines() {
+    const container = document.getElementById('deadlineListContainer');
+    const sortedEvents = googleCalendarData.sort((a, b) => a.date - b.date);
+
+    sortedEvents.forEach(event => {
+        const item = document.createElement('div');
+        item.className = `deadline-item ${event.type} ${event.isCancelled ? 'cancelled' : ''}`;
+        
+        const day = event.date.getDate();
+        const month = event.date.toLocaleString('default', { month: 'short' });
+        const time = event.date.toLocaleString('default', { hour: '2-digit', minute: '2-digit' });
+
+        let metaInfo = `<span>${time}</span> <span>•</span> <span>${event.course}</span>`;
+        if(event.location) metaInfo += ` <span>•</span> <span>${event.location}</span>`;
+        if(event.isCancelled) metaInfo += ` <span class="cancelled-tag">Cancelled</span>`;
+
+        item.innerHTML = `
+            <div class="deadline-date-box">
+                <span class="dd-day">${day}</span>
+                <span class="dd-month">${month}</span>
+            </div>
+            <div class="deadline-content">
+                <h4>${event.title}</h4>
+                <div class="deadline-meta">${metaInfo}</div>
+            </div>
+            ${event.type === 'assignment' ? '<span class="material-icons-round" style="color:#ff9f43">upload_file</span>' : ''}
+            ${event.type === 'exam' ? '<span class="material-icons-round" style="color:var(--primary-red)">timer</span>' : ''}
+        `;
+        container.appendChild(item);
+    });
+}
+
+function renderTasks() {
+    const container = document.getElementById('taskListContainer');
+    container.innerHTML = '';
+    recentTasks.forEach(task => {
+        const div = document.createElement('div');
+        div.className = `task-item ${task.completed ? 'completed' : ''} magic-click-target`;
+        div.innerHTML = `
+            <span class="material-icons-round check-icon">${task.completed ? 'check_circle' : 'radio_button_unchecked'}</span>
+            <div class="task-content"><h4>${task.title}</h4><span>${task.subject}</span></div>
+        `;
+        div.addEventListener('click', (e) => handleTaskClick(e, task, div));
+        container.appendChild(div);
+    });
+}
+
+function handleTaskClick(e, task, element) {
+    createMagicalRipple(e, element);
+    const isCurrentlyCompleted = element.classList.contains('completed');
+    if (isCurrentlyCompleted) {
+        element.classList.remove('completed');
+        element.querySelector('.check-icon').textContent = 'radio_button_unchecked';
+    } else {
+        element.classList.add('completed');
+        element.querySelector('.check-icon').textContent = 'check_circle';
+    }
+    task.completed = !isCurrentlyCompleted;
+}
+
+function createMagicalRipple(event, element) {
+    const circle = document.createElement('span');
+    const diameter = Math.max(element.clientWidth, element.clientHeight) * 1.5;
+    const radius = diameter / 2;
+    const rect = element.getBoundingClientRect();
+    
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - rect.left - radius}px`;
+    circle.style.top = `${event.clientY - rect.top - radius}px`;
+    circle.classList.add('magic-ripple');
+    
+    const existing = element.querySelector('.magic-ripple');
+    if(existing) existing.remove();
+
+    element.appendChild(circle);
+    setTimeout(() => circle.remove(), 700);
+}
+
+function initStudyChart() {
+    const ctx = document.getElementById('studyTimeChart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(255, 42, 42, 0.5)');
+    gradient.addColorStop(1, 'rgba(255, 42, 42, 0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: studyData.labels,
+            datasets: [{
+                label: 'Hours', data: studyData.data, borderColor: '#ff2a2a',
+                borderWidth: 2, backgroundColor: gradient, fill: true,
+                tension: 0.4, pointRadius: 0, pointHoverRadius: 6, pointHoverBackgroundColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' } },
+                y: { grid: { borderDash: [5, 5], color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' }, suggestedMax: 8 }
+            }
+        }
+    });
+}
+function setManualCalendarEvent() {
+    // 1. Get values from the inputs
+    const taskTitle = document.getElementById('manualTaskTitle').value;
+    const dateValue = document.getElementById('manualTaskDate').value;
+
+    // 2. Validation: Ensure both fields are filled
+    if (!taskTitle || !dateValue) {
+        alert("⚠️ Please enter both a Task Name and a Date/Time.");
+        return;
+    }
+
+    // 3. Create Date Objects
+    const startDate = new Date(dateValue);
+    // Set default duration to 1 hour (End time = Start time + 60 mins)
+    const endDate = new Date(startDate.getTime() + (60 * 60 * 1000));
+
+    // 4. Helper function to format date for Google (YYYYMMDDTHHMMSSZ)
+    // We remove hyphens, colons, and milliseconds to fit Google's URL requirement
+    const formatGoogleDate = (date) => {
+        return date.toISOString().replace(/-|:|\.\d\d\d/g, "");
+    };
+
+    const startString = formatGoogleDate(startDate);
+    const endString = formatGoogleDate(endDate);
+
+    // 5. Construct the Google Calendar URL
+    // action=TEMPLATE triggers the "Create Event" screen
+    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(taskTitle)}&dates=${startString}/${endString}`;
+
+    // 6. Open in a new tab
+    window.open(googleUrl, '_blank');
+}
+</script><div class="deadline-setter-container">
+    <h2 class="upside-down-title">MANUAL OVERRIDE: SET DEADLINE</h2>
+    
+    <div class="deadline-inputs">
+        <div class="input-wrapper">
+            <label>MISSION / TASK</label>
+            <input type="text" id="manualTaskTitle" placeholder="Enter objective...">
+        </div>
+        
+        <div class="input-wrapper">
+            <label>DEADLINE DATE & TIME</label>
+            <input type="datetime-local" id="manualTaskDate">
+        </div>
+
+        <button onclick="setManualCalendarEvent()" class="retro-btn">
+            SYNC TO CALENDAR
+        </button>
+    </div>
+    <p class="small-note">* This will open Google Calendar with your date pre-filled.</p>
+</div>
+</body>
+</html>

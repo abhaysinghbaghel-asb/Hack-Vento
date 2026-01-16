@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Thinkers | Upside Down Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- General Reset & Aesthetics --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #050505;
+            color: #e0e0e0;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 19px;
+            padding-bottom: 60px;
+        }
+
+        /* Utilities */
+        .text-red { color: #ff0f0f; }
+        .text-blue { color: #0f8fff; }
+        .text-purple { color: #a80fff; }
+        .text-muted { color: #666; }
+        .icon-spacer { margin-right: 10px; }
+
+        /* --- Navigation --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: #0a0a0a;
+            border-bottom: 2px solid #1a1a1a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            color: #ff0f0f;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(255, 15, 15, 0.6);
+            font-weight: bold;
+        }
+
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: #888; transition: 0.3s; font-size: 1.2rem; }
+        .nav-links a:hover, .active-link { color: #fff; text-shadow: 0 0 10px #ff0f0f; }
+        .active-link { border-bottom: 2px solid #ff0f0f; }
+
+        /* --- Layout --- */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+
+        /* --- Header --- */
+        header { margin-bottom: 50px; }
+        .neon-title {
+            font-size: 4.5rem; color: #ff0f0f;
+            text-shadow: 0 0 5px #ff0f0f, 0 0 15px #ff0f0f, 0 0 30px #ba0000;
+            letter-spacing: 2px; line-height: 1;
+        }
+        .subtitle { color: #999; font-size: 1.4rem; margin-top: 10px; letter-spacing: 1px; }
+
+        /* --- Section Styling --- */
+        .section-container {
+            margin-bottom: 40px; background: #0c0c0c; padding: 30px;
+            border-radius: 16px; border: 1px solid #222;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.6);
+        }
+        .section-header { font-size: 2rem; margin-bottom: 25px; display: flex; align-items: center; }
+
+        /* --- Stats Grid --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 50px; }
+        .stat-card {
+            background: #111; padding: 30px 20px; border-radius: 16px; text-align: center;
+            border: 1px solid #222; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-8px); border-color: #ff0f0f; box-shadow: 0 0 20px rgba(255, 15, 15, 0.15); }
+        .stat-icon { font-size: 2.2rem; margin-bottom: 15px; }
+        .stat-number { font-size: 2.8rem; font-weight: bold; margin-bottom: 5px; line-height: 1; }
+        .stat-label { color: #888; font-size: 1.1rem; }
+
+        /* --- Badges --- */
+        .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+        .badge-card {
+            background: #161616; border: 1px solid #333; border-radius: 14px; padding: 30px 20px;
+            text-align: center; position: relative; transition: transform 0.2s;
+        }
+        .badge-card:hover { transform: scale(1.02); }
+        .badge-main-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .badge-title { font-size: 1.3rem; margin-bottom: 8px; font-weight: bold; }
+        .badge-desc { font-size: 1rem; color: #777; margin-bottom: 15px; line-height: 1.3; }
+        .rarity-tag { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold; }
+        
+        .glow-rare { border-color: #0f8fff; box-shadow: inset 0 0 15px rgba(15, 143, 255, 0.15); }
+        .glow-epic { border-color: #a80fff; box-shadow: inset 0 0 15px rgba(168, 15, 255, 0.15); }
+        .glow-legendary { border-color: #ff0f0f; box-shadow: inset 0 0 15px rgba(255, 15, 15, 0.15); }
+
+        .locked-grid .badge-card { opacity: 0.6; border-color: #2a2a2a; background: #0f0f0f; }
+        .lock-overlay { position: absolute; top: 15px; right: 15px; color: #444; font-size: 1.2rem; }
+
+        /* --- Bottom Split --- */
+        .bottom-split { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .panel-container { background: #0d0d0d; padding: 30px; border-radius: 16px; border: 1px solid #222; }
+
+        /* Milestones */
+        .milestone-item { margin-bottom: 30px; }
+        .ms-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 1.2rem;}
+        .ms-desc { font-size: 1rem; color: #666; margin-bottom: 10px; }
+        .progress-track { width: 100%; height: 10px; background: #222; border-radius: 5px; overflow: hidden; }
+        .progress-bar {
+            height: 100%; border-radius: 5px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
+        }
+        .progress-bar::after {
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+            background: inherit; filter: blur(4px); opacity: 0.7;
+        }
+        .bar-red { background: #ff0f0f; } .bar-blue { background: #0f8fff; }
+
+        /* Certificates */
+        .cert-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1a1a1a; padding: 20px; border-radius: 12px; margin-bottom: 15px;
+            border: 1px solid #2a2a2a; transition: border-color 0.2s;
+        }
+        .cert-item:hover { border-color: #444; }
+        .cert-title { font-size: 1.2rem; font-weight: bold; }
+        .cert-date { font-size: 1rem; color: #666; margin-top: 4px; }
+        .grade-circle {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(255, 15, 15, 0.05); border: 2px solid #ff0f0f;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.4rem; color: #ff0f0f; text-shadow: 0 0 5px #ff0f0f; font-weight: bold;
+        }
+
+        /* --- NEW: Cloud Archive Button --- */
+        .cloud-archive-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: rgba(255, 15, 15, 0.05);
+            border: 2px dashed #ff0f0f;
+            color: #ff0f0f;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cloud-archive-btn:hover {
+            background: rgba(255, 15, 15, 0.15);
+            box-shadow: 0 0 15px rgba(255, 15, 15, 0.3);
+            transform: translateY(-2px);
+            border-style: solid; /* Becomes solid on hover */
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .stats-grid, .badges-grid { grid-template-columns: repeat(2, 1fr); }
+            .bottom-split { grid-template-columns: 1fr; }
+            .neon-title { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+
+    <main class="container">
+        <header>
+            <h1 class="neon-title">Achievements</h1>
+            <p class="subtitle">Your trophies from the Upside Down</p>
+        </header>
+
+        <section class="stats-grid" id="top-stats"></section>
+
+        <section class="section-container">
+            <h2 class="section-header"><i class="fas fa-medal text-red icon-spacer"></i> Badges (Earned)</h2>
+            <div class="badges-grid" id="earned-badges-list"></div>
+        </section>
+
+        <section class="section-container">
+            <h2 class="section-header text-muted"><i class="fas fa-lock icon-spacer"></i> Locked Badges</h2>
+            <div class="badges-grid locked-grid" id="locked-badges-list"></div>
+        </section>
+
+        <div class="bottom-split">
+            <section class="panel-container">
+                 <h2 class="section-header"><i class="fas fa-bullseye text-red icon-spacer"></i> Milestones</h2>
+                 <div class="milestones-list" id="milestones-list"></div>
+            </section>
+
+            <section class="panel-container">
+                <h2 class="section-header"><i class="fas fa-certificate text-red icon-spacer"></i> Certificates</h2>
+                <div class="certs-list" id="certs-list">
+                    </div>
+
+                <a href="https://console.cloud.google.com/storage/browser/YOUR_BUCKET_NAME" target="_blank" class="cloud-archive-btn">
+                    <i class="fab fa-google-drive"></i> View All in Cloud Storage
+                </a>
+
+            </section>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            // apiKey: "...",
+            // projectId: "...",
+        };
+
+        let db;
+        try {
+            if (firebaseConfig.apiKey) {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+            }
+        } catch (e) { console.log("Using Mock Data"); }
+
+        const mockData = {
+            stats: { totalScore: 1250, badgesEarned: 4, totalBadges: 8, milestonesDone: 3, totalMilestones: 5, certificates: 3 },
+            earnedBadges: [
+                { title: "7 Day Streak", desc: "Study 7 days in a row", rarity: "Common", icon: "fa-fire", colorClass: "text-muted" },
+                { title: "Quiz Master", desc: "Score 100% on 5 quizzes", rarity: "Rare", icon: "fa-star", colorClass: "text-blue glow-rare" },
+                { title: "Task Crusher", desc: "Complete 50 tasks", rarity: "Common", icon: "fa-bullseye", colorClass: "text-muted" },
+                { title: "Subject Expert", desc: "Master a subject", rarity: "Epic", icon: "fa-book-open", colorClass: "text-purple glow-epic" }
+            ],
+            lockedBadges: [
+                { title: "Night Owl", desc: "Study past midnight", rarity: "Common", icon: "fa-clock" },
+                { title: "Speed Demon", desc: "Complete quiz in under 2 mins", rarity: "Rare", icon: "fa-bolt", colorClass: "text-blue" },
+                { title: "Champion", desc: "Reach top 10 leaderboard", rarity: "Legendary", icon: "fa-trophy", colorClass: "text-red" },
+                { title: "Perfectionist", desc: "100% accuracy for a week", rarity: "Epic", icon: "fa-ribbon", colorClass: "text-purple" }
+            ],
+            milestones: [
+                { title: "First Steps", desc: "Complete your first task", current: 1, target: 1, barColor: "bar-red" },
+                { title: "Getting Started", desc: "Study for 10 hours", current: 10, target: 10, barColor: "bar-red" },
+                { title: "On a Roll", desc: "Complete 25 tasks", current: 25, target: 25, barColor: "bar-red" },
+                { title: "Dedicated Learner", desc: "Study for 50 hours", current: 42, target: 50, barColor: "bar-blue" }
+            ],
+            certificates: [
+                { title: "Mathematics Fundamentals", date: "Dec 15, 2024", grade: "A+" },
+                { title: "Physics Basics", date: "Dec 10, 2024", grade: "A" },
+                { title: "Chemistry Introduction", date: "Dec 5, 2024", grade: "A+" }
+            ]
+        };
+
+        function renderStats(stats) {
+            document.getElementById('top-stats').innerHTML = `
+                <div class="stat-card"><i class="fas fa-trophy stat-icon text-red"></i><div class="stat-number">${stats.totalScore.toLocaleString()}</div><div class="stat-label">Total Score</div></div>
+                <div class="stat-card"><i class="fas fa-medal stat-icon text-blue"></i><div class="stat-number">${stats.badgesEarned}/${stats.totalBadges}</div><div class="stat-label">Badges Earned</div></div>
+                <div class="stat-card"><i class="fas fa-bullseye stat-icon text-purple"></i><div class="stat-number">${stats.milestonesDone}/${stats.totalMilestones}</div><div class="stat-label">Milestones</div></div>
+                <div class="stat-card"><i class="fas fa-certificate stat-icon text-red"></i><div class="stat-number">${stats.certificates}</div><div class="stat-label">Certificates</div></div>
+            `;
+        }
+        function renderBadges(listId, badges, isLocked = false) {
+            document.getElementById(listId).innerHTML = badges.map(badge => `
+                <div class="badge-card ${badge.colorClass || ''}">
+                    ${isLocked ? '<i class="fas fa-lock lock-overlay"></i>' : ''}
+                    <i class="fas ${badge.icon} badge-main-icon ${badge.colorClass ? badge.colorClass.split(' ')[0] : 'text-muted'}"></i>
+                    <div class="badge-title">${badge.title}</div><div class="badge-desc">${badge.desc}</div><div class="rarity-tag ${badge.colorClass ? badge.colorClass.split(' ')[0] : 'text-muted'}">${badge.rarity}</div>
+                </div>
+            `).join('');
+        }
+        function renderMilestones(milestones) {
+            document.getElementById('milestones-list').innerHTML = milestones.map(ms => `
+                <div class="milestone-item">
+                    <div class="ms-info"><strong>${ms.title}</strong><span>${ms.current}/${ms.target}</span></div>
+                    <div class="ms-desc">${ms.desc}</div>
+                    <div class="progress-track"><div class="progress-bar ${ms.barColor}" style="width: ${(ms.current / ms.target) * 100}%"></div></div>
+                </div>
+            `).join('');
+        }
+        function renderCertificates(certs) {
+            document.getElementById('certs-list').innerHTML = certs.map(cert => `
+                <div class="cert-item"><div><div class="cert-title">${cert.title}</div><div class="cert-date">${cert.date}</div></div><div class="grade-circle">${cert.grade}</div></div>
+            `).join('');
+        }
+
+        async function initDashboard() {
+            if (db) {
+                try {
+                    const docRef = doc(db, "users", "demoUser");
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) { renderAll(docSnap.data()); return; }
+                } catch (e) { console.warn(e); }
+            }
+            renderAll(mockData);
+        }
+        function renderAll(data) {
+            renderStats(data.stats);
+            renderBadges('earned-badges-list', data.earnedBadges);
+            renderBadges('locked-badges-list', data.lockedBadges, true);
+            renderMilestones(data.milestones);
+            renderCertificates(data.certificates);
+        }
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>

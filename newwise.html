@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Thinkers - The Upside Down Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #050505;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* --- Standard Styles --- */
+        #particles-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .particle {
+            position: absolute; 
+            background-color: rgba(255, 0, 0, 0.8);
+            border-radius: 50%; 
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.9);
+            animation: float linear forwards; 
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-150px) translateX(40px) scale(0.5); opacity: 0; }
+        }
+
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 50px; z-index: 10;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+
+        .logo {
+            display: flex; align-items: center; gap: 10px; font-size: 1.5rem;
+            color: #ff3b3b; font-weight: 700; text-shadow: 0 0 10px rgba(255, 59, 59, 0.5);
+        }
+
+        .logo i {
+            font-style: normal; border: 2px solid #ff3b3b; border-radius: 50%;
+            width: 30px; height: 30px; display: flex; justify-content: center;
+            align-items: center; font-size: 1.2rem; box-shadow: 0 0 10px #ff3b3b;
+        }
+
+        .hero {
+            flex: 1; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; z-index: 10; padding: 0 20px;
+        }
+
+        .team-badge {
+            border: 1px solid #5a1a1a; background-color: rgba(40, 10, 10, 0.5);
+            padding: 8px 20px; border-radius: 20px; color: #ff5555; font-size: 0.9rem;
+            margin-bottom: 30px; display: inline-flex; align-items: center; gap: 8px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-family: 'Patrick Hand', cursive; font-size: 6rem; color: #ff2a2a;
+            margin-bottom: 10px; line-height: 1.1; letter-spacing: 2px;
+            text-shadow: 0 0 10px #8b0000, 0 0 20px #ff0000;
+        }
+
+        h2 {
+            font-family: 'Patrick Hand', cursive; font-size: 2.5rem; font-weight: 400;
+            margin-bottom: 20px; color: #fff;
+        }
+
+        p.description {
+            max-width: 600px; color: #bbb; font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px;
+        }
+
+        .cta-buttons { display: flex; justify-content: center; gap: 20px; }
+
+        .btn {
+            padding: 15px 35px; border-radius: 12px; font-size: 1rem; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #ff2a2a; color: white; border: none;
+            box-shadow: 0 0 20px rgba(255, 42, 42, 0.6);
+        }
+        .btn-primary:hover {
+            background-color: #ff4d4d; box-shadow: 0 0 30px rgba(255, 42, 42, 0.8); transform: scale(1.05);
+        }
+
+        /* --- THE UPSIDE DOWN PORTAL --- */
+        #portal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, #1a0000 0%, #000000 100%);
+            z-index: 1000;
+            opacity: 0; pointer-events: none; transition: opacity 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        #portal-overlay.active { opacity: 1; pointer-events: all; }
+
+        #tree-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+        }
+
+        #hanging-links-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; pointer-events: none; 
+        }
+
+        .hanging-wrapper {
+            position: absolute; transform-origin: top center;
+            animation: sway 3s ease-in-out infinite alternate; pointer-events: auto;
+            display: flex; flex-direction: column; align-items: center;
+            opacity: 0; transition: opacity 1s;
+        }
+
+        .vine-rope {
+            width: 3px; background: #4a1a1a; box-shadow: 0 0 5px #ff2a2a; height: 80px; 
+        }
+
+        .portal-link {
+            font-family: 'Patrick Hand', cursive; font-size: 2rem; color: #ddd;
+            background: rgba(10, 0, 0, 0.9); padding: 10px 25px; border: 2px solid #5a1a1a;
+            border-radius: 12px; text-decoration: none; letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); transition: all 0.3s; white-space: nowrap;
+        }
+        .portal-link:hover {
+            color: #ff3b3b; border-color: #ff3b3b; box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            background: rgba(30, 0, 0, 1); transform: scale(1.15);
+        }
+
+        @keyframes sway {
+            from { transform: rotate(-2deg); }
+            to { transform: rotate(2deg); }
+        }
+
+        .portal-close {
+            position: absolute; top: 30px; right: 30px; color: #888;
+            font-size: 2rem; cursor: pointer; z-index: 10;
+            font-family: 'Nunito', sans-serif; transition: color 0.3s;
+        }
+        .portal-close:hover { color: #ff3b3b; text-shadow: 0 0 10px red; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3.5rem; }
+            /* Adjusted link size for mobile to fit better */
+            .portal-link { font-size: 1.1rem; padding: 5px 10px; } 
+            .vine-rope { height: 40px; } /* Shorter ropes on mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-container"></div>
+
+    <div id="portal-overlay">
+        <div class="portal-close" onclick="closePortal()">X</div>
+        <canvas id="tree-canvas"></canvas>
+        <div id="hanging-links-container"></div>
+    </div>
+
+    <nav>
+        <div class="logo"><i>⚡</i> 404 Thinkers</div>
+        <div class="nav-links"></div>
+    </nav>
+
+    <section class="hero">
+        <div class="team-badge"><span>⚡</span> Team 404 Thinkers</div>
+        <h1>The Upside Down</h1>
+        <h2>Learning Portal</h2>
+        <p class="description">
+            Adaptive student time utilization and learning continuity. Navigate through 
+            the darkness of confusion into the light of knowledge.
+        </p>
+        
+        <div class="cta-buttons">
+            <a href="#" class="btn btn-primary" onclick="openPortal(event)">Enter the Portal</a>
+        </div>
+    </section>
+
+    <script>
+        // --- Particle System ---
+        const particleContainer = document.getElementById('particles-container');
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            const size = Math.random() * 5 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            const duration = Math.random() * 5 + 3;
+            particle.style.animationDuration = `${duration}s`;
+            particleContainer.appendChild(particle);
+            particle.addEventListener('animationend', () => { particle.remove(); });
+        }
+
+        // --- INCREASED PARTICLE QUANTITY ---
+        setInterval(createParticle, 50); // Faster creation (was 100)
+        for(let i=0; i<60; i++) { createParticle(); } // More initial dots (was 20)
+
+
+        // --- TREE GENERATION LOGIC ---
+        const canvas = document.getElementById('tree-canvas');
+        const ctx = canvas.getContext('2d');
+        const linksContainer = document.getElementById('hanging-links-container');
+        
+        const menuItems = [
+            { text: "Dashboard", href: "dashboard.html" },
+            { text: "Achievements", href: "achievements.html" },
+            { text: "Discussion", href: "discussionpanel.html" },
+            { text: "Quiz", href: "mcq.html" },
+            { text: "Help", href: "help.html" }
+        ];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // If the portal is open, redraw tree on resize to fit new dimensions
+            if(document.getElementById('portal-overlay').classList.contains('active')){
+                growTree();
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function growTree() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            linksContainer.innerHTML = '';
+            
+            // --- MOBILE DETECTION ---
+            const isMobile = window.innerWidth < 768;
+
+            const root = {
+                x: canvas.width / 2,
+                y: canvas.height,
+                // On mobile: Make trunk shorter (20% height) to fit screen. Desktop: 33%
+                len: isMobile ? canvas.height * 0.20 : canvas.height * 0.33, 
+                angle: 0, 
+                // On mobile: Thinner trunk
+                width: isMobile ? 20 : 40,
+                depth: 0,
+                id: 'root'
+            };
+            
+            const leftItems = menuItems.slice(0, 2);
+            const rightItems = menuItems.slice(2, 5);
+
+            animateFixedBranch(root, { left: leftItems, right: rightItems });
+        }
+
+        // --- DECORATIVE "GHOST" BRANCH ---
+        function animateGhostBranch(b) {
+            if (b.width < 1 || b.depth > 4) return;
+            const endX = b.x + b.len * Math.sin(b.angle * Math.PI / 180);
+            const endY = b.y - b.len * Math.cos(b.angle * Math.PI / 180);
+            let progress = 0; const speed = 0.06;
+
+            function drawGhost() {
+                progress += speed;
+                const curX = b.x + (endX - b.x) * progress;
+                const curY = b.y + (endY - b.y) * progress;
+                ctx.beginPath();
+                ctx.strokeStyle = '#220000'; 
+                ctx.lineWidth = b.width;
+                ctx.lineCap = 'round';
+                ctx.moveTo(b.x, b.y);
+                ctx.lineTo(curX, curY);
+                ctx.stroke();
+
+                if (progress < 1) { requestAnimationFrame(drawGhost); } 
+                else {
+                    const subBranches = Math.floor(Math.random() * 2) + 1;
+                    for(let i=0; i<subBranches; i++) {
+                        animateGhostBranch({
+                            x: endX, y: endY, len: b.len * 0.7,
+                            angle: b.angle + (Math.random() * 60 - 30),
+                            width: b.width * 0.6, depth: b.depth + 1
+                        });
+                    }
+                }
+            }
+            drawGhost();
+        }
+
+        // --- MAIN SKELETON (Adjusted for Mobile) ---
+        function animateFixedBranch(b, payload) {
+            if (b.width < 1) return;
+
+            const endX = b.x + b.len * Math.sin(b.angle * Math.PI / 180);
+            const endY = b.y - b.len * Math.cos(b.angle * Math.PI / 180);
+            let progress = 0; const growthSpeed = 0.04; 
+
+            // --- MOBILE SETTINGS ---
+            const isMobile = window.innerWidth < 768;
+            // Narrower angle (35) on mobile so branches don't go off screen. Desktop uses 50.
+            const spreadAngle = isMobile ? 35 : 50;
+            // Shorter branches on mobile
+            const branchScale = isMobile ? 0.8 : 0.9;
+
+            function drawStep() {
+                progress += growthSpeed;
+                const curX = b.x + (endX - b.x) * progress;
+                const curY = b.y + (endY - b.y) * progress;
+                ctx.beginPath();
+                ctx.strokeStyle = '#3a0505'; 
+                ctx.shadowBlur = 15; ctx.shadowColor = '#6a0000'; 
+                ctx.lineWidth = b.width; ctx.lineCap = 'round';
+                ctx.moveTo(b.x, b.y); ctx.lineTo(curX, curY);
+                ctx.stroke();
+
+                if (progress < 1) { requestAnimationFrame(drawStep); } 
+                else {
+                    if (b.depth < 3) {
+                          animateGhostBranch({
+                            x: endX, y: endY, len: b.len * 0.5, 
+                            angle: b.angle + (Math.random() > 0.5 ? 45 : -45), 
+                            width: b.width * 0.4, depth: b.depth + 1
+                        });
+                    }
+
+                    if (b.depth === 0) {
+                        // First Split: Uses dynamic spreadAngle
+                        animateFixedBranch({
+                            x: endX, y: endY, len: b.len * branchScale, 
+                            angle: -spreadAngle, width: b.width * 0.7, depth: 1, side: 'left'
+                        }, payload.left);
+
+                        animateFixedBranch({
+                            x: endX, y: endY, len: b.len * branchScale,
+                            angle: spreadAngle, width: b.width * 0.7, depth: 1, side: 'right'
+                        }, payload.right);
+
+                        animateGhostBranch({
+                             x: endX, y: endY, len: b.len * 0.6, angle: 0, 
+                             width: b.width * 0.5, depth: 1
+                        });
+                    } 
+                    else if (b.depth === 1) {
+                        // Second Split: Adjusted Angles
+                        const subSpread = spreadAngle * 0.6; 
+                        
+                        if (b.side === 'left') {
+                            animateFixedBranch({
+                                x: endX, y: endY, len: b.len * 0.85,
+                                angle: b.angle - subSpread, width: b.width * 0.6, depth: 2, item: payload[0] 
+                            }, null);
+                            animateFixedBranch({
+                                x: endX, y: endY, len: b.len * 0.95, 
+                                angle: b.angle + subSpread, width: b.width * 0.6, depth: 2, item: payload[1] 
+                            }, null);
+                        } 
+                        else if (b.side === 'right') {
+                            // --- FIX APPLIED HERE: QUIZ MOVED TO PINK SPOT ---
+                            
+                            // 1. QUIZ: Sharp Left (Inner side), Medium Length
+                            // This hits the "pink mark" area
+                            animateFixedBranch({
+                                x: endX, y: endY, len: b.len * 0.85,
+                                angle: b.angle - (subSpread * 1.5), width: b.width * 0.6, depth: 2, item: payload[1] 
+                            }, null);
+                            
+                            // 2. DISCUSSION: Right side, Higher up
+                            animateFixedBranch({
+                                x: endX, y: endY, len: b.len * 1.0, 
+                                angle: b.angle + (subSpread * 0.5), width: b.width * 0.6, depth: 2, item: payload[0] 
+                            }, null);
+                            
+                            // 3. HELP: Center-Left, Short Length (Low Down)
+                            // "Downside" relative to the general cluster
+                            animateFixedBranch({
+                                x: endX, y: endY, len: b.len * 0.55,
+                                angle: b.angle - (subSpread * 0.3), width: b.width * 0.6, depth: 2, item: payload[2] 
+                            }, null);
+                        }
+                    }
+                    else if (b.depth === 2) {
+                        if (b.item) { createHangingLink(endX, endY, b.item); }
+                        animateGhostBranch({
+                            x: endX, y: endY, len: 30, angle: b.angle - 20, width: 2, depth: 4
+                        });
+                    }
+                }
+            }
+            drawStep();
+        }
+
+        function createHangingLink(x, y, item) {
+            if(!item) return;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'hanging-wrapper';
+            wrapper.style.left = `${x}px`;
+            wrapper.style.top = `${y}px`;
+            
+            // Shorter ropes on mobile
+            const isMobile = window.innerWidth < 768;
+            const baseLen = isMobile ? 30 : 60;
+            const ropeLen = baseLen + Math.random() * 20; 
+
+            wrapper.innerHTML = `
+                <div class="vine-rope" style="height: ${ropeLen}px"></div>
+                <a href="${item.href}" class="portal-link">${item.text}</a>
+            `;
+            linksContainer.appendChild(wrapper);
+            setTimeout(() => { wrapper.style.opacity = '1'; }, 300);
+        }
+
+        // --- CONTROLS ---
+        function openPortal(e) {
+            if(e) e.preventDefault();
+            const overlay = document.getElementById('portal-overlay');
+            overlay.classList.add('active');
+            resizeCanvas();
+            setTimeout(growTree, 300); 
+        }
+
+        function closePortal() {
+            const overlay = document.getElementById('portal-overlay');
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                linksContainer.innerHTML = '';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
