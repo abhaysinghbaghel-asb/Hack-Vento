@@ -7,265 +7,304 @@
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
    <style>
-   /* Container at the bottom */
-.deadline-setter-container {
-    background-color: #050505; /* Very dark background */
-    border-top: 3px solid #cc0000; /* Red neon border */
-    padding: 30px;
-    margin-top: 50px;
-    text-align: center;
-    color: #fff;
-    font-family: 'Courier New', Courier, monospace; /* Retro font */
-    box-shadow: 0 -5px 20px rgba(204, 0, 0, 0.3); /* Red glow */
-}
+    /* --- STRANGER THINGS CLICK ANIMATION STYLES --- */
 
-.upside-down-title {
-    color: #cc0000;
-    text-shadow: 0 0 10px #ff0000;
-    font-size: 1.5rem;
-    letter-spacing: 2px;
-    margin-bottom: 25px;
-    text-transform: uppercase;
-}
-
-/* Flexbox for the inputs to sit side-by-side */
-.deadline-inputs {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.input-wrapper {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-.input-wrapper label {
-    font-size: 0.8rem;
-    color: #aaa;
-    margin-bottom: 5px;
-}
-
-/* Input Styling */
-.deadline-inputs input {
-    background: #1a1a1a;
-    border: 1px solid #cc0000;
-    color: #fff;
-    padding: 10px 15px;
-    font-family: inherit;
-    font-size: 1rem;
-    outline: none;
-    border-radius: 4px;
-    transition: box-shadow 0.3s;
-}
-
-.deadline-inputs input:focus {
-    box-shadow: 0 0 15px rgba(204, 0, 0, 0.6);
-}
-
-/* Button Styling */
-.retro-btn {
-    background-color: #cc0000;
-    color: #fff;
-    border: none;
-    padding: 12px 25px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: inherit;
-    text-transform: uppercase;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    height: 46px; /* Match input height */
-}
-
-.retro-btn:hover {
-    background-color: #ff0000;
-    box-shadow: 0 0 20px #ff0000;
-    transform: scale(1.05);
-}
-
-.small-note {
-    font-size: 0.7rem;
-    color: #666;
-    margin-top: 15px;
-}
-   :root {
-    --bg-dark: #09090b; 
-    --bg-panel: #121216; 
-    --bg-panel-light: #1c1c24;
-    --primary-red: #ff2a2a; 
-    --glow-red: rgba(255, 42, 42, 0.6);
-    --text-main: #ffffff;
-    --text-muted: #9ca3af;
-    /* Font variables */
-    --font-header: 'Patrick Hand', cursive; 
-    --font-body: 'Montserrat', sans-serif;
-}
-
-/* Reset & Base Styles */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    font-family: var(--font-body);
-    overflow-x: hidden;
-    min-height: 100vh;
-}
-
-/* Background Texture */
-.upside-down-bg {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.07'/%3E%3C/svg%3E");
-    z-index: -1; pointer-events: none;
-}
-
-/* --- Typography: Patrick Hand with Special Capitalization --- */
-.card-header h3,
-.page-title,
-.modal-header h2 {
-    font-family: var(--font-header);
-    text-transform: lowercase; /* 1. Force lowercase */
-    letter-spacing: 1px;
-}
-
-.card-header h3::first-letter,
-.page-title::first-letter,
-.modal-header h2::first-letter {
-    text-transform: uppercase; /* 2. Capitalize first letter */
-}
-
-.page-title {
-    font-size: 3.5rem;
-    color: var(--primary-red);
-    text-shadow: 0 0 15px var(--glow-red);
-    margin-bottom: 0.5rem;
-}
-
-.subtitle { color: var(--text-muted); font-size: 1rem; }
-.accent-text { color: var(--primary-red); font-weight: 700; }
-.red-text { color: var(--primary-red); font-weight: bold; }
-
-/* Flicker Animations */
-@keyframes flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 15px var(--primary-red); }
-    20%, 24%, 55% { opacity: 0.7; text-shadow: none; }
-}
-.flicker-text { animation: flicker 4s infinite alternate; }
-
-/* --- Layout & Cards --- */
-.main-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-.dashboard-header { margin-bottom: 2rem; }
-
-.grid-section, .kpi-grid { display: grid; gap: 1.5rem; margin-bottom: 2rem; }
-.kpi-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.middle-grid { grid-template-columns: 2fr 1fr; }
-.bottom-grid { grid-template-columns: 1fr 1fr; }
-
-.card {
-    background: var(--bg-panel); border-radius: 16px; padding: 1.5rem;
-    border: 1px solid rgba(255,255,255,0.05);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    transition: border-color 0.3s;
-}
-.card:hover { border-color: rgba(255,42,42,0.3); }
-
-/* KPI Styling */
-.kpi-card { display: flex; justify-content: space-between; align-items: center; transform-style: preserve-3d; }
-.kpi-label { color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.5rem; }
-.kpi-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem; }
-.kpi-trend { font-size: 0.8rem; font-weight: 600; }
-.kpi-trend.positive { color: var(--primary-red); text-shadow: 0 0 5px var(--primary-red); }
-.icon-box {
-    width: 45px; height: 45px; border-radius: 12px;
-    background: rgba(255,255,255,0.05); color: var(--primary-red);
-    display: flex; align-items: center; justify-content: center;
-}
-.icon-box.red-glow { box-shadow: 0 0 15px rgba(255,42,42,0.2); }
-
-/* Section Headers */
-.card-header { display: flex; align-items: center; margin-bottom: 1.5rem; gap: 0.8rem; }
-.card-header h3 { font-size: 1.4rem; color: #fff; font-weight: normal; }
-.accent-icon { color: var(--primary-red); font-size: 1.4rem; text-shadow: 0 0 5px var(--primary-red); }
-
-/* Chart & Progress */
-.large-chart { height: 250px; }
-.progress-list { display: flex; flex-direction: column; gap: 1.2rem; }
-.prog-info { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.9rem; }
-.prog-bar-bg { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-.prog-bar-fill.red { height: 100%; background: linear-gradient(90deg, var(--primary-red), #ff6b6b); box-shadow: 0 0 10px var(--primary-red); }
-
-/* --- Deadlines & Timetable Section --- */
-.google-sync-indicator {
-    font-size: 0.75rem; color: var(--text-muted); margin-top: -1rem; margin-bottom: 1rem;
-    display: flex; align-items: center; gap: 5px;
-}
-.deadline-list { display: flex; flex-direction: column; gap: 0.8rem; max-height: 300px; overflow-y: auto; }
-.deadline-list::-webkit-scrollbar { width: 5px; }
-.deadline-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-.deadline-item {
-    display: flex; align-items: center; background: var(--bg-panel-light);
-    padding: 0.8rem 1rem; border-radius: 12px; border-left: 3px solid transparent;
-}
-.deadline-item.assignment { border-left-color: #ff9f43; } 
-.deadline-item.exam { border-left-color: var(--primary-red); } 
-.deadline-item.class { border-left-color: #54a0ff; }
-
-.deadline-date-box {
-    display: flex; flex-direction: column; align-items: center;
-    padding-right: 1rem; margin-right: 1rem; border-right: 1px solid rgba(255,255,255,0.1);
-    min-width: 50px;
-}
-.dd-day { font-size: 1.1rem; font-weight: 700; }
-.dd-month { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); }
-.deadline-content { flex-grow: 1; }
-.deadline-content h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 2px; }
-.deadline-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 10px; }
-.deadline-item.cancelled { background: rgba(255, 42, 42, 0.05); opacity: 0.8; }
-.deadline-item.cancelled h4 { text-decoration: line-through; color: var(--text-muted); }
-.cancelled-tag { color: var(--primary-red); font-weight: bold; font-size: 0.75rem; text-transform: uppercase;}
-
-/* --- Task List --- */
-.task-list { display: flex; flex-direction: column; gap: 0.8rem; }
-.task-item {
-    display: flex; align-items: center; background: var(--bg-panel-light);
-    padding: 1rem; border-radius: 12px; cursor: pointer; position: relative; overflow: hidden;
-    border: 1px solid transparent; transition: 0.2s;
-}
-.task-item:hover { background: #23232c; }
-.task-item.completed { border-color: var(--primary-red); background: rgba(255,42,42,0.05); }
-.task-item .check-icon { margin-right: 1rem; color: var(--text-muted); transition: 0.3s; }
-.task-item.completed .check-icon { color: var(--primary-red); text-shadow: 0 0 8px var(--primary-red); }
-.task-content h4 { font-size: 0.95rem; font-weight: 500; }
-.task-content span { font-size: 0.8rem; color: var(--text-muted); }
-.task-item.completed h4 { text-decoration: line-through; color: var(--text-muted); }
-
-/* --- MAGICAL CLICK EFFECT --- */
-.magic-ripple {
-    position: absolute;
+/* The glowing ripple circle */
+.st-ripple {
+    position: fixed; 
+    width: 20px; 
+    height: 20px; 
     border-radius: 50%;
-    background: transparent;
-    border: 2px solid var(--primary-red);
-    box-shadow: 0 0 20px var(--primary-red), inset 0 0 20px var(--primary-red);
-    transform: scale(0);
-    animation: magic-ripple-anim 0.7s ease-out;
-    pointer-events: none;
+    background: transparent; 
+    border: 2px solid rgba(255, 59, 59, 0.8);
+    box-shadow: 0 0 10px #ff3b3b, 0 0 20px #ff3b3b, inset 0 0 10px #ff3b3b;
+    transform: translate(-50%, -50%) scale(0); 
+    pointer-events: none; 
+    z-index: 9999;
+    animation: rippleEffect 0.6s ease-out forwards;
 }
 
-@keyframes magic-ripple-anim {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(3); opacity: 0; border-width: 0px; }
+/* Ripple Animation Keyframes */
+@keyframes rippleEffect {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; border-width: 5px; }
+    100% { transform: translate(-50%, -50%) scale(4); opacity: 0; border-width: 0px; }
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-    .middle-grid, .bottom-grid { grid-template-columns: 1fr; }
-}</style>
+/* The floating white particles (spores) */
+.st-spore {
+    position: fixed; 
+    width: 4px; 
+    height: 4px; 
+    background-color: #e5e5e5; 
+    border-radius: 50%;
+    pointer-events: none; 
+    z-index: 9998; 
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+    animation: sporeFloat 0.8s ease-out forwards;
+}
+
+/* Spore Floating Animation Keyframes */
+@keyframes sporeFloat {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+}
+    :root {
+        --bg-dark: #09090b; 
+        --bg-panel: #121216; 
+        --bg-panel-light: #1c1c24;
+        --primary-red: #ff2a2a; 
+        --glow-red: rgba(255, 42, 42, 0.6);
+        --text-main: #ffffff;
+        --text-muted: #9ca3af;
+        --font-header: 'Patrick Hand', cursive; 
+        --font-body: 'Montserrat', sans-serif;
+        --font-retro: 'Courier New', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        font-family: var(--font-body);
+        overflow-x: hidden;
+        min-height: 100vh;
+    }
+
+    /* Background */
+    .upside-down-bg {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.07'/%3E%3C/svg%3E");
+        z-index: -1; pointer-events: none;
+    }
+
+    /* Headers */
+    .card-header h3, .page-title {
+        font-family: var(--font-header);
+        text-transform: lowercase;
+        letter-spacing: 1px;
+    }
+    .card-header h3::first-letter, .page-title::first-letter {
+        text-transform: uppercase;
+    }
+
+    .dashboard-header {
+        display: flex; align-items: center; justify-content: flex-start;
+        gap: 20px; padding-bottom: 1rem; margin-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .page-title {
+        font-size: 2.2rem; color: var(--primary-red);
+        text-shadow: 0 0 10px var(--glow-red); margin-bottom: 0; line-height: 1;
+    }
+    .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; border-left: 2px solid #333; padding-left: 15px; }
+    .accent-text { color: var(--primary-red); font-weight: 700; }
+    .red-text { color: var(--primary-red); font-weight: bold; }
+
+    @keyframes flicker {
+        0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 15px var(--primary-red); }
+        20%, 24%, 55% { opacity: 0.7; text-shadow: none; }
+    }
+    .flicker-text { animation: flicker 4s infinite alternate; }
+
+    /* Layout */
+    .main-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .grid-section, .kpi-grid { display: grid; gap: 1.5rem; margin-bottom: 2rem; }
+    .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .middle-grid { grid-template-columns: 2fr 1fr; }
+    .bottom-grid { grid-template-columns: 1fr 1fr; }
+
+    .card {
+        background: var(--bg-panel); border-radius: 16px; padding: 1.5rem;
+        border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: border-color 0.3s;
+        display: flex; flex-direction: column;
+    }
+    .card:hover { border-color: rgba(255,42,42,0.3); }
+
+    /* KPI */
+    .kpi-card { display: flex; justify-content: space-between; align-items: center; }
+    .kpi-label { color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.5rem; }
+    .kpi-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .kpi-trend { font-size: 0.8rem; font-weight: 600; }
+    .kpi-trend.positive { color: var(--primary-red); text-shadow: 0 0 5px var(--primary-red); }
+    .icon-box {
+        width: 45px; height: 45px; border-radius: 12px;
+        background: rgba(255,255,255,0.05); color: var(--primary-red);
+        display: flex; align-items: center; justify-content: center;
+    }
+    .icon-box.red-glow { box-shadow: 0 0 15px rgba(255,42,42,0.2); }
+
+    /* Headers & Buttons */
+    .card-header { display: flex; align-items: center; margin-bottom: 1.5rem; gap: 0.8rem; justify-content: space-between; }
+    .header-left { display: flex; align-items: center; gap: 0.8rem; }
+    .card-header h3 { font-size: 1.4rem; color: #fff; font-weight: normal; }
+    .accent-icon { color: var(--primary-red); font-size: 1.4rem; text-shadow: 0 0 5px var(--primary-red); }
+    
+    .icon-btn-add {
+        background: transparent; border: 1px solid #333; color: var(--text-muted);
+        width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: 0.3s; font-size: 1.2rem;
+    }
+    .icon-btn-add:hover { border-color: var(--primary-red); color: var(--primary-red); box-shadow: 0 0 10px rgba(255,42,42,0.3); transform: rotate(90deg); }
+
+    /* Timer */
+    .timer-section { margin-bottom: 2rem; }
+    .timer-card { background: linear-gradient(145deg, #0d0d10, #16161c); border: 1px solid #333; text-align: center; }
+    .timer-display-container {
+        background: #000; border: 2px solid #333; border-radius: 8px; padding: 15px; margin: 15px 0;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.8); position: relative;
+    }
+    .timer-digits {
+        font-family: 'Courier New', monospace; font-size: 3.5rem; font-weight: 700; color: #333;
+        letter-spacing: 5px; transition: all 0.3s ease;
+    }
+    .timer-active .timer-digits {
+        color: #ff2a2a; text-shadow: 0 0 15px rgba(255, 42, 42, 0.8);
+        animation: pulse-red 1.5s infinite alternate;
+    }
+    @keyframes pulse-red { 0% { text-shadow: 0 0 15px rgba(255, 42, 42, 0.8); } 100% { text-shadow: 0 0 25px rgba(255, 42, 42, 1); } }
+    .timer-controls { display: flex; justify-content: center; gap: 15px; }
+    .control-btn {
+        padding: 10px 25px; border-radius: 5px; font-weight: bold; text-transform: uppercase;
+        cursor: pointer; border: none; font-family: var(--font-body); transition: 0.3s;
+    }
+    .btn-start { background: #1a1a1a; color: #fff; border: 1px solid #fff; }
+    .btn-start:hover { background: #fff; color: #000; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
+    .btn-stop { background: #2a0000; color: #ff2a2a; border: 1px solid #ff2a2a; }
+    .btn-stop:hover { background: #ff2a2a; color: #fff; box-shadow: 0 0 15px rgba(255,42,42,0.5); }
+    .timer-label { position: absolute; top: 5px; left: 10px; font-size: 0.6rem; color: #555; letter-spacing: 1px; }
+
+    /* Chart & Progress */
+    .large-chart { height: 250px; }
+    .progress-list { display: flex; flex-direction: column; gap: 1.2rem; }
+    .prog-info { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.9rem; }
+    .prog-bar-bg { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+    .prog-bar-fill.red { height: 100%; background: linear-gradient(90deg, var(--primary-red), #ff6b6b); box-shadow: 0 0 10px var(--primary-red); }
+
+    /* SCROLLBAR CUSTOMIZATION */
+    .deadline-list, .task-list {
+        display: flex; flex-direction: column; gap: 0.8rem;
+        max-height: 280px; overflow-y: auto; padding-right: 5px; 
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary-red); }
+
+    /* List Items & Delete Buttons */
+    .deadline-item, .task-item { 
+        display: flex; align-items: center; background: var(--bg-panel-light); 
+        padding: 0.8rem 1rem; border-radius: 12px; flex-shrink: 0; 
+        border-left: 3px solid transparent; transition: 0.2s;
+    }
+    .deadline-item:hover, .task-item:hover { background: #23232c; }
+
+    /* Specific Item Styling */
+    .deadline-item.assignment { border-left-color: #ff9f43; } 
+    .deadline-item.exam { border-left-color: var(--primary-red); } 
+    .deadline-item.class { border-left-color: #54a0ff; }
+    .deadline-date-box { display: flex; flex-direction: column; align-items: center; padding-right: 1rem; margin-right: 1rem; border-right: 1px solid rgba(255,255,255,0.1); min-width: 50px; }
+    .dd-day { font-size: 1.1rem; font-weight: 700; }
+    .dd-month { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); }
+    .deadline-content { flex-grow: 1; }
+    .deadline-content h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 2px; }
+    .deadline-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 10px; }
+    .deadline-item.cancelled h4 { text-decoration: line-through; color: var(--text-muted); }
+    .cancelled-tag { color: var(--primary-red); font-weight: bold; font-size: 0.75rem; text-transform: uppercase;}
+
+    .task-item.completed { border-color: var(--primary-red); background: rgba(255,42,42,0.05); }
+    .task-item .check-icon { margin-right: 1rem; color: var(--text-muted); transition: 0.3s; }
+    .task-item.completed .check-icon { color: var(--primary-red); text-shadow: 0 0 8px var(--primary-red); }
+    .task-content { flex-grow: 1; }
+    .task-content h4 { font-size: 0.95rem; font-weight: 500; }
+    .task-content span { font-size: 0.8rem; color: var(--text-muted); }
+    .task-item.completed h4 { text-decoration: line-through; color: var(--text-muted); }
+    
+    .delete-btn {
+        color: #444; font-size: 1.2rem; cursor: pointer; transition: 0.3s; 
+        padding: 5px; border-radius: 50%; margin-left: 10px;
+    }
+    .delete-btn:hover { color: var(--primary-red); background: rgba(255, 42, 42, 0.1); text-shadow: 0 0 5px var(--primary-red); }
+
+    /* Magic Ripple */
+    .magic-ripple {
+        position: absolute; border-radius: 50%; background: transparent; border: 2px solid var(--primary-red);
+        box-shadow: 0 0 20px var(--primary-red), inset 0 0 20px var(--primary-red);
+        transform: scale(0); animation: magic-ripple-anim 0.7s ease-out; pointer-events: none;
+    }
+    @keyframes magic-ripple-anim { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; border-width: 0px; } }
+
+    /* --- THEMED MODAL STYLES --- */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.9); z-index: 1000;
+        display: none; justify-content: center; align-items: center;
+        backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    
+    .modal-box {
+        background: #000; 
+        border: 2px solid #cc0000; 
+        padding: 2.5rem; width: 90%; max-width: 450px;
+        box-shadow: 0 0 50px rgba(204, 0, 0, 0.2), inset 0 0 20px rgba(204, 0, 0, 0.1);
+        transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-family: var(--font-retro); /* Retro Font for the box */
+        position: relative;
+    }
+    /* Corner decoration */
+    .modal-box::before {
+        content: ""; position: absolute; top: -2px; left: -2px; width: 20px; height: 20px; 
+        border-top: 2px solid #fff; border-left: 2px solid #fff;
+    }
+    .modal-box::after {
+        content: ""; position: absolute; bottom: -2px; right: -2px; width: 20px; height: 20px; 
+        border-bottom: 2px solid #fff; border-right: 2px solid #fff;
+    }
+
+    .modal-overlay.active .modal-box { transform: scale(1); }
+    
+    .modal-header h2 { 
+        color: #ff2a2a; margin-bottom: 2rem; text-align: center; 
+        font-family: var(--font-header); letter-spacing: 2px;
+        text-shadow: 0 0 10px #ff2a2a;
+    }
+    .modal-form { display: flex; flex-direction: column; gap: 1.5rem; }
+    
+    .input-wrapper label {
+        font-family: var(--font-retro); font-size: 0.75rem; letter-spacing: 1px; color: #888;
+    }
+
+    .modal-input {
+        background: #111; border: 1px solid #333; color: #ff2a2a; padding: 15px;
+        border-radius: 0px; outline: none; font-family: var(--font-retro);
+        font-size: 1rem; letter-spacing: 1px;
+    }
+    .modal-input::placeholder { color: #444; }
+    .modal-input:focus { border-color: #ff2a2a; box-shadow: 0 0 15px rgba(255, 42, 42, 0.3); }
+    
+    .modal-actions { display: flex; gap: 1rem; margin-top: 1rem; }
+    
+    .btn-cancel { 
+        background: transparent; border: 1px solid #444; color: #888; flex: 1; 
+        font-family: var(--font-retro); font-weight: bold;
+    }
+    .btn-cancel:hover { border-color: #fff; color: #fff; }
+    
+    .btn-confirm { 
+        background: #2a0000; border: 1px solid #ff2a2a; color: #ff2a2a; flex: 1; 
+        box-shadow: 0 0 10px rgba(204,0,0,0.2); font-family: var(--font-retro); font-weight: bold;
+    }
+    .btn-confirm:hover { background: #ff2a2a; color: #000; box-shadow: 0 0 25px rgba(255,0,0,0.6); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+        .middle-grid, .bottom-grid { grid-template-columns: 1fr; }
+        .dashboard-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+        .subtitle { border-left: none; padding-left: 0; }
+    }
+   </style>
 </head>
 <body>
 
@@ -282,7 +321,7 @@ body {
             <div class="card kpi-card" data-tilt>
                 <div class="kpi-info">
                     <span class="kpi-label">Study Time Today</span>
-                    <h2 class="kpi-value">4h 32m</h2>
+                    <h2 class="kpi-value" id="totalStudyTime">0h 00m</h2>
                     <span class="kpi-trend positive">+12%</span>
                 </div>
                 <div class="icon-box red-glow"><span class="material-icons-round">schedule</span></div>
@@ -290,7 +329,7 @@ body {
             <div class="card kpi-card" data-tilt>
                 <div class="kpi-info">
                     <span class="kpi-label">Tasks Completed</span>
-                    <h2 class="kpi-value">8/12</h2>
+                    <h2 class="kpi-value" id="tasksCompletedValue">8/12</h2>
                     <span class="kpi-trend positive">+3</span>
                 </div>
                 <div class="icon-box red-glow"><span class="material-icons-round">check_circle</span></div>
@@ -298,7 +337,7 @@ body {
             <div class="card kpi-card" data-tilt>
                 <div class="kpi-info">
                     <span class="kpi-label">Current Streak</span>
-                    <h2 class="kpi-value">7 days</h2>
+                    <h2 class="kpi-value" id="tasksCompletedValue">7 days</h2>
                     <span class="kpi-trend positive">🔥</span>
                 </div>
                 <div class="icon-box red-glow"><span class="material-icons-round">whatshot</span></div>
@@ -313,11 +352,30 @@ body {
             </div>
         </div>
 
+        <div class="grid-section timer-section">
+            <div class="card timer-card" data-tilt>
+                <div class="card-header" style="justify-content: center;">
+                    <span class="material-icons-round accent-icon">hourglass_top</span>
+                    <h3>Active Study Session</h3>
+                </div>
+                <div class="timer-display-container" id="timerContainer">
+                    <span class="timer-label">HAWKINS LABS CHRONOMETER</span>
+                    <div class="timer-digits" id="chronometer">00:00:00</div>
+                </div>
+                <div class="timer-controls">
+                    <button class="control-btn btn-start" onclick="toggleTimer()" id="startStopBtn">Start Focus</button>
+                    <button class="control-btn btn-stop" onclick="finishSession()">Stop & Save</button>
+                </div>
+            </div>
+        </div>
+
         <div class="grid-section middle-grid">
             <div class="card chart-card">
                 <div class="card-header">
-                    <span class="material-icons-round accent-icon">calendar_today</span>
-                    <h3>Weekly Study Time</h3>
+                    <div class="header-left">
+                        <span class="material-icons-round accent-icon">calendar_today</span>
+                        <h3>Weekly Study Time</h3>
+                    </div>
                 </div>
                 <div class="chart-container large-chart">
                     <canvas id="studyTimeChart"></canvas>
@@ -326,8 +384,10 @@ body {
 
             <div class="card progress-card">
                 <div class="card-header">
-                    <span class="material-icons-round accent-icon">menu_book</span>
-                    <h3>Subject Progress</h3>
+                    <div class="header-left">
+                        <span class="material-icons-round accent-icon">menu_book</span>
+                        <h3>Subject Progress</h3>
+                    </div>
                 </div>
                 <div class="progress-list">
                     <div class="progress-item">
@@ -350,8 +410,13 @@ body {
             
             <div class="card deadline-card">
                 <div class="card-header">
-                    <span class="material-icons-round accent-icon">event_busy</span>
-                    <h3>Upcoming & Timetable</h3>
+                    <div class="header-left">
+                        <span class="material-icons-round accent-icon">event_busy</span>
+                        <h3>Upcoming & Timetable</h3>
+                    </div>
+                    <button class="icon-btn-add" onclick="openEventModal()" title="Add New Event">
+                        <span class="material-icons-round">add</span>
+                    </button>
                 </div>
                 <div class="google-sync-indicator">
                     <span class="material-icons-round" style="font-size: 1rem;">sync</span> Synced with Google Calendar
@@ -362,8 +427,13 @@ body {
 
             <div class="card task-list-card">
                 <div class="card-header">
-                    <span class="material-icons-round accent-icon">task_alt</span>
-                    <h3>Recent Tasks</h3>
+                    <div class="header-left">
+                        <span class="material-icons-round accent-icon">task_alt</span>
+                        <h3>Recent Tasks</h3>
+                    </div>
+                    <button class="icon-btn-add" onclick="openTaskModal()" title="Add New Task">
+                        <span class="material-icons-round">add</span>
+                    </button>
                 </div>
                 <div class="task-list" id="taskListContainer">
                     </div>
@@ -371,220 +441,392 @@ body {
         </div>
     </div>
 
+    <div id="addTaskModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header"><h2>// NEW MISSION</h2></div>
+            <div class="modal-form">
+                <div class="input-wrapper">
+                    <label>OBJECTIVE</label>
+                    <input type="text" id="newTaskTitleInput" class="modal-input" placeholder="ENTER TASK_NAME">
+                </div>
+                <div class="input-wrapper">
+                    <label>SECTOR (SUBJECT)</label>
+                    <input type="text" id="newTaskSubjectInput" class="modal-input" placeholder="ENTER SUBJECT">
+                </div>
+                <div class="modal-actions">
+                    <button class="retro-btn btn-cancel" onclick="closeTaskModal()">ABORT</button>
+                    <button class="retro-btn btn-confirm" onclick="addNewTask()">DEPLOY</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addEventModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header"><h2>// TIMETABLE ENTRY</h2></div>
+            <div class="modal-form">
+                <div class="input-wrapper">
+                    <label>EVENT TITLE</label>
+                    <input type="text" id="newEventTitle" class="modal-input" placeholder="ENTER TITLE">
+                </div>
+                <div class="input-wrapper">
+                    <label>COURSE / LOCATION</label>
+                    <input type="text" id="newEventCourse" class="modal-input" placeholder="ENTER LOCATION">
+                </div>
+                <div class="input-wrapper">
+                    <label>DATE & TIME</label>
+                    <input type="datetime-local" id="newEventDate" class="modal-input">
+                </div>
+                <div class="modal-actions">
+                    <button class="retro-btn btn-cancel" onclick="closeEventModal()">ABORT</button>
+                    <button class="retro-btn btn-confirm" onclick="addEventToCalendar()">SYNC_SYSTEM</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
-    <script>document.addEventListener("DOMContentLoaded", () => {
-    // Initialize external libraries
-    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
-        max: 15, speed: 400, glare: true, "max-glare": 0.2,
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+            max: 15, speed: 400, glare: true, "max-glare": 0.2,
+        });
+        initStudyChart();
+        renderTasks();
+        renderDeadlines(); 
     });
 
-    // Initialize components
-    initStudyChart();
-    renderTasks();
-    renderDeadlines(); 
-});
+    let googleCalendarData = [
+        { id: 'e1', type: 'assignment', title: 'Hackathon Prototype', date: new Date(2026, 0, 3, 23, 59), course: 'Project' },
+        { id: 'e2', type: 'class', title: 'Data Structures Lecture', date: new Date(2026, 0, 5, 9, 30), course: 'CS201', location: 'Hall A' },
+        { id: 'e3', type: 'class', title: 'Advanced Physics Lab', date: new Date(2026, 0, 5, 14, 0), course: 'PH301', location: 'Lab 2', isCancelled: true },
+        { id: 'e4', type: 'exam', title: 'Calculus Quiz', date: new Date(2026, 0, 6, 11, 0), course: 'MA102', location: 'Room 304' }
+    ];
 
-// --- UPDATED DATA FOR JANUARY 2026 ---
-// Javascript counts months from 0 (0 = Jan, 1 = Feb, etc.)
-const googleCalendarData = [
-    { 
-        id: 'e1', type: 'assignment', title: 'Hackathon Prototype', 
-        date: new Date(2026, 0, 3, 23, 59), // Jan 3, 2026 (Tomorrow)
-        course: 'Project' 
-    },
-    { 
-        id: 'e2', type: 'class', title: 'Data Structures Lecture', 
-        date: new Date(2026, 0, 5, 9, 30), // Jan 5, 2026 (Monday)
-        course: 'CS201', location: 'Hall A'
-    },
-    { 
-        id: 'e3', type: 'class', title: 'Advanced Physics Lab', 
-        date: new Date(2026, 0, 5, 14, 0), // Jan 5, 2026 (Monday)
-        course: 'PH301', location: 'Lab 2',
-        isCancelled: true // Shows as cancelled
-    },
-    { 
-        id: 'e4', type: 'exam', title: 'Calculus Quiz', 
-        date: new Date(2026, 0, 6, 11, 0), // Jan 6, 2026 (Tuesday)
-        course: 'MA102', location: 'Room 304' 
+    const studyData = { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [4.5, 3.2, 5.1, 4.8, 6.2, 3.5, 2.8] };
+
+    let recentTasks = [
+        { id: 1, title: "Complete Chapter 5 Problems", subject: "Mathematics", completed: true },
+        { id: 2, title: "Review Thermodynamics Notes", subject: "Physics", completed: true },
+        { id: 3, title: "Organic Chemistry Practice", subject: "Chemistry", completed: false },
+        { id: 4, title: "Biology Lab Report", subject: "Biology", completed: false }
+    ];
+
+    // =========================================
+    // MODAL LOGIC (TASKS)
+    // =========================================
+    function openTaskModal() {
+        document.getElementById('addTaskModal').classList.add('active');
+        setTimeout(() => document.getElementById('newTaskTitleInput').focus(), 100);
     }
-];
-
-// --- Chart Data ---
-const studyData = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    data: [4.5, 3.2, 5.1, 4.8, 6.2, 3.5, 2.8]
-};
-
-// --- Task Data ---
-const recentTasks = [
-    { id: 1, title: "Complete Chapter 5 Problems", subject: "Mathematics", completed: true },
-    { id: 2, title: "Review Thermodynamics Notes", subject: "Physics", completed: true },
-    { id: 3, title: "Organic Chemistry Practice", subject: "Chemistry", completed: false },
-    { id: 4, title: "Biology Lab Report", subject: "Biology", completed: false }
-];
-
-
-// =========================================
-// RENDER FUNCTIONS
-// =========================================
-
-function renderDeadlines() {
-    const container = document.getElementById('deadlineListContainer');
-    const sortedEvents = googleCalendarData.sort((a, b) => a.date - b.date);
-
-    sortedEvents.forEach(event => {
-        const item = document.createElement('div');
-        item.className = `deadline-item ${event.type} ${event.isCancelled ? 'cancelled' : ''}`;
+    function closeTaskModal() {
+        document.getElementById('addTaskModal').classList.remove('active');
+        document.getElementById('newTaskTitleInput').value = '';
+        document.getElementById('newTaskSubjectInput').value = '';
+    }
+    function addNewTask() {
+        const title = document.getElementById('newTaskTitleInput').value;
+        const subject = document.getElementById('newTaskSubjectInput').value;
+        if(!title || !subject) { alert("⚠️ Mission Incomplete: Please fill all fields."); return; }
         
-        const day = event.date.getDate();
-        const month = event.date.toLocaleString('default', { month: 'short' });
-        const time = event.date.toLocaleString('default', { hour: '2-digit', minute: '2-digit' });
-
-        let metaInfo = `<span>${time}</span> <span>•</span> <span>${event.course}</span>`;
-        if(event.location) metaInfo += ` <span>•</span> <span>${event.location}</span>`;
-        if(event.isCancelled) metaInfo += ` <span class="cancelled-tag">Cancelled</span>`;
-
-        item.innerHTML = `
-            <div class="deadline-date-box">
-                <span class="dd-day">${day}</span>
-                <span class="dd-month">${month}</span>
-            </div>
-            <div class="deadline-content">
-                <h4>${event.title}</h4>
-                <div class="deadline-meta">${metaInfo}</div>
-            </div>
-            ${event.type === 'assignment' ? '<span class="material-icons-round" style="color:#ff9f43">upload_file</span>' : ''}
-            ${event.type === 'exam' ? '<span class="material-icons-round" style="color:var(--primary-red)">timer</span>' : ''}
-        `;
-        container.appendChild(item);
-    });
-}
-
-function renderTasks() {
-    const container = document.getElementById('taskListContainer');
-    container.innerHTML = '';
-    recentTasks.forEach(task => {
-        const div = document.createElement('div');
-        div.className = `task-item ${task.completed ? 'completed' : ''} magic-click-target`;
-        div.innerHTML = `
-            <span class="material-icons-round check-icon">${task.completed ? 'check_circle' : 'radio_button_unchecked'}</span>
-            <div class="task-content"><h4>${task.title}</h4><span>${task.subject}</span></div>
-        `;
-        div.addEventListener('click', (e) => handleTaskClick(e, task, div));
-        container.appendChild(div);
-    });
-}
-
-function handleTaskClick(e, task, element) {
-    createMagicalRipple(e, element);
-    const isCurrentlyCompleted = element.classList.contains('completed');
-    if (isCurrentlyCompleted) {
-        element.classList.remove('completed');
-        element.querySelector('.check-icon').textContent = 'radio_button_unchecked';
-    } else {
-        element.classList.add('completed');
-        element.querySelector('.check-icon').textContent = 'check_circle';
+        recentTasks.unshift({ id: Date.now(), title: title, subject: subject, completed: false });
+        renderTasks();
+        closeTaskModal();
     }
-    task.completed = !isCurrentlyCompleted;
-}
+    function deleteTask(id) {
+        recentTasks = recentTasks.filter(t => t.id !== id);
+        renderTasks();
+    }
 
-function createMagicalRipple(event, element) {
-    const circle = document.createElement('span');
-    const diameter = Math.max(element.clientWidth, element.clientHeight) * 1.5;
-    const radius = diameter / 2;
-    const rect = element.getBoundingClientRect();
+    // =========================================
+    // MODAL LOGIC (EVENTS)
+    // =========================================
+    function openEventModal() {
+        document.getElementById('addEventModal').classList.add('active');
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('newEventDate').value = now.toISOString().slice(0, 16);
+    }
+    function closeEventModal() {
+        document.getElementById('addEventModal').classList.remove('active');
+        document.getElementById('newEventTitle').value = '';
+        document.getElementById('newEventCourse').value = '';
+    }
+    function addEventToCalendar() {
+        const title = document.getElementById('newEventTitle').value;
+        const course = document.getElementById('newEventCourse').value;
+        const dateVal = document.getElementById('newEventDate').value;
+        
+        if(!title || !dateVal) { alert("⚠️ Please enter Title and Date."); return; }
+
+        // 1. Add visually to list
+        const dateObj = new Date(dateVal);
+        googleCalendarData.push({
+            id: 'new' + Date.now(),
+            type: 'class', 
+            title: title,
+            date: dateObj,
+            course: course,
+            location: ''
+        });
+        renderDeadlines();
+
+        // 2. Open Google Calendar
+        const startDate = new Date(dateVal);
+        const endDate = new Date(startDate.getTime() + (60 * 60 * 1000));
+        const formatGoogleDate = (d) => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title + " - " + course)}&dates=${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`;
+        window.open(googleUrl, '_blank');
+
+        closeEventModal();
+    }
     
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - rect.left - radius}px`;
-    circle.style.top = `${event.clientY - rect.top - radius}px`;
-    circle.classList.add('magic-ripple');
-    
-    const existing = element.querySelector('.magic-ripple');
-    if(existing) existing.remove();
+    function deleteEvent(id) {
+        googleCalendarData = googleCalendarData.filter(e => e.id !== id);
+        renderDeadlines();
+    }
 
-    element.appendChild(circle);
-    setTimeout(() => circle.remove(), 700);
-}
+    // =========================================
+    // RENDER FUNCTIONS
+    // =========================================
+    function renderDeadlines() {
+        const container = document.getElementById('deadlineListContainer');
+        container.innerHTML = '';
+        const sortedEvents = googleCalendarData.sort((a, b) => a.date - b.date);
 
-function initStudyChart() {
-    const ctx = document.getElementById('studyTimeChart').getContext('2d');
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(255, 42, 42, 0.5)');
-    gradient.addColorStop(1, 'rgba(255, 42, 42, 0)');
+        sortedEvents.forEach(event => {
+            const item = document.createElement('div');
+            item.className = `deadline-item ${event.type} ${event.isCancelled ? 'cancelled' : ''}`;
+            const day = event.date.getDate();
+            const month = event.date.toLocaleString('default', { month: 'short' });
+            const time = event.date.toLocaleString('default', { hour: '2-digit', minute: '2-digit' });
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: studyData.labels,
-            datasets: [{
-                label: 'Hours', data: studyData.data, borderColor: '#ff2a2a',
-                borderWidth: 2, backgroundColor: gradient, fill: true,
-                tension: 0.4, pointRadius: 0, pointHoverRadius: 6, pointHoverBackgroundColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' } },
-                y: { grid: { borderDash: [5, 5], color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' }, suggestedMax: 8 }
-            }
+            let metaInfo = `<span>${time}</span> <span>•</span> <span>${event.course}</span>`;
+            if(event.location) metaInfo += ` <span>•</span> <span>${event.location}</span>`;
+            if(event.isCancelled) metaInfo += ` <span class="cancelled-tag">Cancelled</span>`;
+
+            item.innerHTML = `
+                <div class="deadline-date-box">
+                    <span class="dd-day">${day}</span>
+                    <span class="dd-month">${month}</span>
+                </div>
+                <div class="deadline-content">
+                    <h4>${event.title}</h4>
+                    <div class="deadline-meta">${metaInfo}</div>
+                </div>
+                ${event.type === 'assignment' ? '<span class="material-icons-round" style="color:#ff9f43">upload_file</span>' : ''}
+                ${event.type === 'exam' ? '<span class="material-icons-round" style="color:var(--primary-red)">timer</span>' : ''}
+            `;
+            
+            // DELETE BUTTON FOR EVENTS
+            const deleteBtn = document.createElement('span');
+            deleteBtn.className = 'material-icons-round delete-btn';
+            deleteBtn.innerHTML = 'delete';
+            deleteBtn.title = "Delete Event";
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteEvent(event.id);
+            };
+            item.appendChild(deleteBtn);
+
+            container.appendChild(item);
+        });
+    }
+
+    function renderTasks() {
+        const container = document.getElementById('taskListContainer');
+        container.innerHTML = '';
+        const total = recentTasks.length;
+        const completed = recentTasks.filter(t => t.completed).length;
+        document.getElementById('tasksCompletedValue').innerText = `${completed}/${total}`;
+
+        recentTasks.forEach(task => {
+            const div = document.createElement('div');
+            div.className = `task-item ${task.completed ? 'completed' : ''} magic-click-target`;
+            
+            div.innerHTML = `
+                <span class="material-icons-round check-icon">${task.completed ? 'check_circle' : 'radio_button_unchecked'}</span>
+                <div class="task-content"><h4>${task.title}</h4><span>${task.subject}</span></div>
+            `;
+
+            // DELETE BUTTON FOR TASKS
+            const deleteBtn = document.createElement('span');
+            deleteBtn.className = 'material-icons-round delete-btn';
+            deleteBtn.innerHTML = 'delete';
+            deleteBtn.title = "Delete Task";
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteTask(task.id);
+            };
+            div.appendChild(deleteBtn);
+
+            div.onclick = (e) => {
+                if(e.target !== deleteBtn) handleTaskClick(e, task, div);
+            };
+            
+            container.appendChild(div);
+        });
+    }
+
+    function handleTaskClick(e, task, element) {
+        if(e.target.classList.contains('delete-btn')) return;
+        createMagicalRipple(e, element);
+        const isCurrentlyCompleted = element.classList.contains('completed');
+        if (isCurrentlyCompleted) {
+            element.classList.remove('completed');
+            element.querySelector('.check-icon').textContent = 'radio_button_unchecked';
+        } else {
+            element.classList.add('completed');
+            element.querySelector('.check-icon').textContent = 'check_circle';
         }
-    });
-}
-function setManualCalendarEvent() {
-    // 1. Get values from the inputs
-    const taskTitle = document.getElementById('manualTaskTitle').value;
-    const dateValue = document.getElementById('manualTaskDate').value;
-
-    // 2. Validation: Ensure both fields are filled
-    if (!taskTitle || !dateValue) {
-        alert("⚠️ Please enter both a Task Name and a Date/Time.");
-        return;
+        task.completed = !isCurrentlyCompleted;
+        const total = recentTasks.length;
+        const completed = recentTasks.filter(t => t.completed).length;
+        document.getElementById('tasksCompletedValue').innerText = `${completed}/${total}`;
     }
 
-    // 3. Create Date Objects
-    const startDate = new Date(dateValue);
-    // Set default duration to 1 hour (End time = Start time + 60 mins)
-    const endDate = new Date(startDate.getTime() + (60 * 60 * 1000));
+    function createMagicalRipple(event, element) {
+        const circle = document.createElement('span');
+        const diameter = Math.max(element.clientWidth, element.clientHeight) * 1.5;
+        const radius = diameter / 2;
+        const rect = element.getBoundingClientRect();
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${event.clientX - rect.left - radius}px`;
+        circle.style.top = `${event.clientY - rect.top - radius}px`;
+        circle.classList.add('magic-ripple');
+        const existing = element.querySelector('.magic-ripple');
+        if(existing) existing.remove();
+        element.appendChild(circle);
+        setTimeout(() => circle.remove(), 700);
+    }
 
-    // 4. Helper function to format date for Google (YYYYMMDDTHHMMSSZ)
-    // We remove hyphens, colons, and milliseconds to fit Google's URL requirement
-    const formatGoogleDate = (date) => {
-        return date.toISOString().replace(/-|:|\.\d\d\d/g, "");
-    };
+    function initStudyChart() {
+        const ctx = document.getElementById('studyTimeChart').getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(255, 42, 42, 0.5)');
+        gradient.addColorStop(1, 'rgba(255, 42, 42, 0)');
 
-    const startString = formatGoogleDate(startDate);
-    const endString = formatGoogleDate(endDate);
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: studyData.labels,
+                datasets: [{
+                    label: 'Hours', data: studyData.data, borderColor: '#ff2a2a',
+                    borderWidth: 2, backgroundColor: gradient, fill: true,
+                    tension: 0.4, pointRadius: 0, pointHoverRadius: 6, pointHoverBackgroundColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' } },
+                    y: { grid: { borderDash: [5, 5], color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' }, suggestedMax: 8 }
+                }
+            }
+        });
+    }
 
-    // 5. Construct the Google Calendar URL
-    // action=TEMPLATE triggers the "Create Event" screen
-    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(taskTitle)}&dates=${startString}/${endString}`;
+    let timerInterval;
+    let startTime;
+    let elapsedTime = 0;
+    let isRunning = false;
 
-    // 6. Open in a new tab
-    window.open(googleUrl, '_blank');
-}
-</script><div class="deadline-setter-container">
-    <h2 class="upside-down-title">MANUAL OVERRIDE: SET DEADLINE</h2>
-    
-    <div class="deadline-inputs">
-        <div class="input-wrapper">
-            <label>MISSION / TASK</label>
-            <input type="text" id="manualTaskTitle" placeholder="Enter objective...">
-        </div>
+    function toggleTimer() {
+        const btn = document.getElementById('startStopBtn');
+        const container = document.getElementById('timerContainer');
+        if (!isRunning) {
+            isRunning = true;
+            startTime = Date.now() - elapsedTime;
+            timerInterval = setInterval(updateTimerDisplay, 100); 
+            btn.innerText = "Pause";
+            container.classList.add('timer-active');
+        } else {
+            isRunning = false;
+            clearInterval(timerInterval);
+            btn.innerText = "Resume";
+            container.classList.remove('timer-active');
+        }
+    }
+
+    function updateTimerDisplay() {
+        const time = Date.now() - startTime;
+        elapsedTime = time;
+        const diffInHrs = time / 3600000;
+        const hh = Math.floor(diffInHrs);
+        const diffInMin = (diffInHrs - hh) * 60;
+        const mm = Math.floor(diffInMin);
+        const diffInSec = (diffInMin - mm) * 60;
+        const ss = Math.floor(diffInSec);
+        const formatted = (hh < 10 ? "0" + hh : hh) + ":" + (mm < 10 ? "0" + mm : mm) + ":" + (ss < 10 ? "0" + ss : ss);
+        document.getElementById('chronometer').innerText = formatted;
+    }
+
+    function finishSession() {
+        if (elapsedTime === 0) return;
+        clearInterval(timerInterval);
+        isRunning = false;
+        document.getElementById('timerContainer').classList.remove('timer-active');
+        document.getElementById('startStopBtn').innerText = "Start Focus";
+        const sessionMinutes = Math.floor(elapsedTime / 60000);
+        addToTotalStudyTime(sessionMinutes);
+        elapsedTime = 0;
+        document.getElementById('chronometer').innerText = "00:00:00";
+        alert(`Session Saved! +${sessionMinutes} minutes added to your daily total.`);
+    }
+
+    function addToTotalStudyTime(minutesToAdd) {
+        const kpiElement = document.getElementById('totalStudyTime');
+        const currentText = kpiElement.innerText; 
+        const regex = /(\d+)h\s*(\d+)m/;
+        const match = currentText.match(regex);
+        let currentHours = 0, currentMinutes = 0;
+        if (match) {
+            currentHours = parseInt(match[1]);
+            currentMinutes = parseInt(match[2]);
+        }
+        let totalMinutes = (currentHours * 60) + currentMinutes + minutesToAdd;
+        const newHours = Math.floor(totalMinutes / 60);
+        const newMinutes = totalMinutes % 60;
+        const displayMinutes = newMinutes < 10 ? "0" + newMinutes : newMinutes;
+        kpiElement.innerText = `${newHours}h ${displayMinutes}m`;
+        kpiElement.classList.remove('flicker-text');
+        void kpiElement.offsetWidth;
+        kpiElement.classList.add('flicker-text');
+    }
+   /* --- CLICK ANIMATION LOGIC --- */
+document.addEventListener('click', (e) => {
+    const x = e.clientX;
+    const y = e.clientY;
+
+    // 1. Create the Ripple Effect
+    const ripple = document.createElement('div'); 
+    ripple.className = 'st-ripple';
+    ripple.style.left = `${x}px`; 
+    ripple.style.top = `${y}px`;
+    document.body.appendChild(ripple);
+
+    // 2. Create the Floating Spores (8 particles)
+    for(let i = 0; i < 8; i++){
+        const spore = document.createElement('div'); 
+        spore.className = 'st-spore';
+        spore.style.left = `${x}px`; 
+        spore.style.top = `${y}px`;
         
-        <div class="input-wrapper">
-            <label>DEADLINE DATE & TIME</label>
-            <input type="datetime-local" id="manualTaskDate">
-        </div>
+        // Randomize direction for each spore
+        spore.style.setProperty('--dx', `${(Math.random() - 0.5) * 150}px`);
+        spore.style.setProperty('--dy', `${(Math.random() - 0.5) * 150}px`);
+        
+        document.body.appendChild(spore); 
+        
+        // Remove spore from DOM after animation finishes (800ms)
+        setTimeout(() => spore.remove(), 800);
+    }
 
-        <button onclick="setManualCalendarEvent()" class="retro-btn">
-            SYNC TO CALENDAR
-        </button>
-    </div>
-    <p class="small-note">* This will open Google Calendar with your date pre-filled.</p>
-</div>
+    // Remove ripple from DOM after animation finishes (600ms)
+    setTimeout(() => ripple.remove(), 600);
+});
+   </script>
 </body>
 </html>
