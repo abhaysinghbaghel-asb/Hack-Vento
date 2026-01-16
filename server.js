@@ -48,16 +48,10 @@ wss.on('connection', (ws) => {
         try {
             if (!API_KEY) throw new Error("No API Key");
 
-           const result = await model.generateContent(`
-                You are Murray Bauman, a paranoid conspiracy theorist from Stranger Things.
-                You are answering a question from a random stranger.
-                
-                The Question: "${userPost.content}"
-                
-                Rules:
-                1. Be suspicious but helpful.
-                2. Mention "the Russians", "the government", or "psychic kids" occasionally.
-                3. Keep it short (max 2 sentences).
+          const result = await model.generateContent(`
+                You are a helpful tutor. 
+                Question: "${userPost.content}"
+                Keep answer short (max 2 sentences).
             `);
             const response = await result.response;
             sendAiResponse(response.text());
@@ -91,4 +85,5 @@ function broadcast(data) {
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+
 });
