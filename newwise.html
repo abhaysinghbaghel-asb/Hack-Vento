@@ -147,8 +147,10 @@
             to { transform: rotate(2deg); }
         }
 
+        /* --- MODIFIED: Return Arrow Styles --- */
         .portal-close {
-            position: absolute; top: 30px; right: 30px; color: #888;
+            position: absolute; top: 30px; left: 30px; /* MOVED TO LEFT */
+            color: #888;
             font-size: 2rem; cursor: pointer; z-index: 10;
             font-family: 'Nunito', sans-serif; transition: color 0.3s;
         }
@@ -317,7 +319,7 @@
     <div id="particles-container"></div>
 
     <div id="portal-overlay">
-        <div class="portal-close" onclick="closePortal()">X</div>
+        <div class="portal-close" onclick="closePortal()"><i class="fa-solid fa-arrow-left"></i></div>
         <canvas id="tree-canvas"></canvas>
         <div id="hanging-links-container"></div>
     </div>
