@@ -99,7 +99,9 @@
     }
     .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; border-left: 2px solid #333; padding-left: 15px; }
     .accent-text { color: var(--primary-red); font-weight: 700; }
-    .red-text { color: var(--primary-red); font-weight: bold; }
+    
+    /* UPDATED: Changed red-text to green to match progress bars */
+    .red-text { color: #008000; font-weight: bold; text-shadow: 0 0 5px rgba(0, 100, 0, 0.5); }
 
     @keyframes flicker {
         0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 15px var(--primary-red); }
@@ -180,7 +182,13 @@
     .progress-list { display: flex; flex-direction: column; gap: 1.2rem; }
     .prog-info { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.9rem; }
     .prog-bar-bg { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-    .prog-bar-fill.red { height: 100%; background: linear-gradient(90deg, var(--primary-red), #ff6b6b); box-shadow: 0 0 10px var(--primary-red); }
+    
+    /* UPDATED: Changed from Red Gradient to Green Gradient */
+    .prog-bar-fill.red { 
+        height: 100%; 
+        background: linear-gradient(90deg, #006400, #228B22); /* Dark Green to Forest Green */
+        box-shadow: 0 0 10px #006400; 
+    }
 
     /* SCROLLBAR CUSTOMIZATION */
     .deadline-list, .task-list {
@@ -704,15 +712,17 @@
     function initStudyChart() {
         const ctx = document.getElementById('studyTimeChart').getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(255, 42, 42, 0.5)');
-        gradient.addColorStop(1, 'rgba(255, 42, 42, 0)');
+        // Changed to Dark Green Type
+        gradient.addColorStop(0, 'rgba(0, 100, 0, 0.5)');
+        gradient.addColorStop(1, 'rgba(0, 100, 0, 0)');
 
         new Chart(ctx, {
             type: 'line',
             data: {
                 labels: studyData.labels,
                 datasets: [{
-                    label: 'Hours', data: studyData.data, borderColor: '#ff2a2a',
+                    label: 'Hours', data: studyData.data, 
+                    borderColor: '#006400', // Dark Green
                     borderWidth: 2, backgroundColor: gradient, fill: true,
                     tension: 0.4, pointRadius: 0, pointHoverRadius: 6, pointHoverBackgroundColor: '#fff'
                 }]
@@ -830,3 +840,4 @@ document.addEventListener('click', (e) => {
    </script>
 </body>
 </html>
+
