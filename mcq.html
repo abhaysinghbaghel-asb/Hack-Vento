@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -76,7 +76,7 @@
         }
 
         /* --- Global Card Styling --- */
-        .stat-card, .quiz-card, .diff-card, .schedule-container, .graph-wrapper, .perf-table-wrapper, .question-box {
+        .stat-card, .quiz-card, .diff-card, .topic-card, .schedule-container, .graph-wrapper, .perf-table-wrapper, .question-box {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -85,7 +85,7 @@
             transition: all 0.3s ease;
         }
 
-        .stat-card:hover, .quiz-card:hover, .diff-card:hover {
+        .stat-card:hover, .quiz-card:hover, .diff-card:hover, .topic-card:hover {
             border-color: #444;
             transform: translateY(-2px);
         }
@@ -157,6 +157,31 @@
         .diff-hard { border-bottom: 4px solid var(--st-red); }
         .diff-hard:hover { background: rgba(255, 59, 59, 0.05); border-color: var(--st-red); }
         .diff-hard .diff-title { color: var(--st-red); text-shadow: 0 0 10px rgba(255,59,59,0.3); }
+
+        /* --- Topic Selection Grid (New) --- */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .topic-card {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        .topic-card:hover {
+            border-color: var(--st-red);
+            background: rgba(255, 59, 59, 0.05);
+        }
+        .topic-icon { font-size: 2rem; color: var(--st-red); margin-bottom: 15px; }
+        .topic-name { font-size: 1.2rem; font-weight: 700; color: #fff; font-family: 'Nunito', sans-serif; }
+        .topic-count { color: #666; font-size: 0.85rem; margin-top: 5px; }
 
 
         /* --- Schedule Section --- */
@@ -485,17 +510,17 @@
             <p class="subtitle" id="diff-subject-title">Subject</p>
 
             <div class="diff-grid">
-                <div class="diff-card diff-easy" onclick="startLevel('Easy')">
+                <div class="diff-card diff-easy" onclick="showTopicSelection('Easy')">
                     <div class="diff-title">Hawkins High</div>
                     <div class="diff-sub">Easy Mode</div>
                     <div style="margin-top:10px; color:#aaa; font-size:0.8rem;">Basic Concepts & Definitions</div>
                 </div>
-                <div class="diff-card diff-med" onclick="startLevel('Medium')">
+                <div class="diff-card diff-med" onclick="showTopicSelection('Medium')">
                     <div class="diff-title">The Upside Down</div>
                     <div class="diff-sub">Medium Mode</div>
                     <div style="margin-top:10px; color:#aaa; font-size:0.8rem;">Standard Problems & Application</div>
                 </div>
-                <div class="diff-card diff-hard" onclick="startLevel('Hard')">
+                <div class="diff-card diff-hard" onclick="showTopicSelection('Hard')">
                     <div class="diff-title">Vecna's Curse</div>
                     <div class="diff-sub">Hard Mode</div>
                     <div style="margin-top:10px; color:#aaa; font-size:0.8rem;">Complex Logic & Numericals</div>
@@ -503,9 +528,20 @@
             </div>
         </div>
 
-        <div id="quiz-view" class="view-section">
+        <div id="topic-view" class="view-section">
             <button class="btn btn-back" onclick="backToDiff()">
                 <i class="fas fa-arrow-left"></i> Change Difficulty
+            </button>
+            <h1 class="st-header" style="font-size: 2.5rem;">Select Operation</h1>
+            <p class="subtitle" id="topic-subtitle">Choose your mission focus</p>
+
+            <div class="topic-grid" id="topic-grid">
+                </div>
+        </div>
+
+        <div id="quiz-view" class="view-section">
+            <button class="btn btn-back" onclick="backToTopic()">
+                <i class="fas fa-arrow-left"></i> Change Topic
             </button>
             <h1 id="quiz-subject-header" class="st-header" style="font-size: 2.5rem; text-align: left;">Subject</h1>
             <p id="quiz-level-indicator" style="color:#888; margin-bottom: 2rem;">Level: ...</p>
@@ -532,98 +568,159 @@
     </div>
 
     <script>
-        // --- 1. DATA (NESTED: Subject -> Difficulty -> Questions with Explanation & Video Placeholder) ---
+        // --- 1. DATA (NESTED: Subject -> Difficulty -> Questions with TOPIC) ---
+        // Each Topic now has exactly 4 questions
         const quizData = {
             Mathematics: {
                 Easy: [
-                    { q: "If A is a matrix of order 3x3, then |3A| is equal to:", options: ["3|A|", "9|A|", "27|A|", "None"], correct: 2, explanation: "For a matrix of order n, |kA| = k^n|A|. Here n=3, so |3A| = 3^3|A| = 27|A|.", video: "https://youtu.be/CdEzFo-nOtY" },
-                    { q: "The derivative of constant function is:", options: ["1", "0", "Constant", "Undefined"], correct: 1, explanation: "The rate of change of a constant value is zero.", video: "https://youtu.be/cyn6CDnAlcA" },
-                    { q: "Integration of e^x is:", options: ["e^x", "e^2x", "x", "log x"], correct: 0, explanation: "e^x is the unique function whose derivative and integral are itself.", video: "#" },
-                    { q: "What is the degree of differential equation y' + y = 0?", options: ["0", "1", "2", "3"], correct: 1, explanation: "Degree is the power of the highest order derivative.", video: "#" },
-                    { q: "Probability of an impossible event is:", options: ["1", "0", "0.5", "-1"], correct: 1, explanation: "Impossible events can never occur, so probability is 0.", video: "#" }
+                    // TOPIC: ALGEBRA
+                    { topic: "Algebra", q: "If A is a matrix of order 3x3, then |3A| is equal to:", options: ["3|A|", "9|A|", "27|A|", "None"], correct: 2, explanation: "For order n, |kA| = k^n|A|. Here 3^3 = 27.", video: "#" },
+                    { topic: "Algebra", q: "Which of the following is an Identity Matrix?", options: ["Diag[1,1,1]", "Diag[0,0,0]", "Diag[1,0,1]", "None"], correct: 0, explanation: "Identity matrix has 1s on diagonal and 0s elsewhere.", video: "#" },
+                    { topic: "Algebra", q: "A square matrix A is symmetric if:", options: ["A' = -A", "A' = A", "|A| = 0", "A⁻¹ exists"], correct: 1, explanation: "By definition, symmetric matrices satisfy A' = A.", video: "#" },
+                    { topic: "Algebra", q: "Inverse of matrix A exists only if:", options: ["|A| = 0", "|A| ≠ 0", "A is singular", "A is identity"], correct: 1, explanation: "A matrix must be non-singular (|A| ≠ 0) to be invertible.", video: "#" },
+                    // TOPIC: CALCULUS
+                    { topic: "Calculus", q: "Derivative of e^x is:", options: ["x", "e^x", "e^2x", "0"], correct: 1, explanation: "e^x is its own derivative.", video: "#" },
+                    { topic: "Calculus", q: "Integration of 1/x dx is:", options: ["x", "log|x|", "1/x^2", "e^x"], correct: 1, explanation: "Standard integral of 1/x is log|x| + C.", video: "#" },
+                    { topic: "Calculus", q: "Derivative of constant function is:", options: ["1", "0", "Constant", "Undefined"], correct: 1, explanation: "Rate of change of a constant is zero.", video: "#" },
+                    { topic: "Calculus", q: "Value of ∫sin(x)dx is:", options: ["cos(x)", "-cos(x)", "sin(x)", "-sin(x)"], correct: 1, explanation: "Integral of sine is negative cosine.", video: "#" }
                 ],
                 Medium: [
-                    { q: "If A² = A, find (I+A)³ - 7A.", options: ["A", "I - A", "I", "3A"], correct: 2, explanation: "Expand (I+A)³ using binomial theorem and substitute A²=A. The result simplifies to I.", video: "#" },
-                    { q: "Integral of dx / (x² + 2x + 2) is:", options: ["tan⁻¹(x+1) + C", "log(x+1) + C", "sin⁻¹(x+1)", "None"], correct: 0, explanation: "Complete the square: 1/((x+1)²+1). This is the form of tan⁻¹(x+1).", video: "#" },
-                    { q: "Probability of even prime on a die roll:", options: ["1/6", "1/2", "1/3", "0"], correct: 0, explanation: "The only even prime number is 2. So 1 favorable outcome out of 6.", video: "#" },
-                    { q: "Derivative of sin(x²) is:", options: ["cos(x²)", "2x cos(x²)", "2x sin(x²)", "-2x"], correct: 1, explanation: "Use chain rule: d/dx(sin(x²)) = cos(x²) * d/dx(x²) = 2x cos(x²).", video: "#" },
-                    { q: "Value of sin⁻¹(sin(2π/3)) is:", options: ["2π/3", "π/3", "4π/3", "π/6"], correct: 1, explanation: "Range of sin⁻¹ is [-π/2, π/2]. sin(2π/3) = sin(π-π/3) = sin(π/3). So answer is π/3.", video: "#" }
+                    // TOPIC: PROBABILITY
+                    { topic: "Probability", q: "P(A|B) is given by:", options: ["P(A∩B)/P(B)", "P(A∩B)/P(A)", "P(A)/P(B)", "P(A)P(B)"], correct: 0, explanation: "Definition of conditional probability.", video: "#" },
+                    { topic: "Probability", q: "If A and B are independent, P(A∩B) = ", options: ["P(A)+P(B)", "P(A)P(B)", "P(A)/P(B)", "0"], correct: 1, explanation: "For independent events, intersection is product of probabilities.", video: "#" },
+                    { topic: "Probability", q: "Sum of probabilities of a distribution is:", options: ["0", "0.5", "1", "Infinite"], correct: 2, explanation: "Total probability is always 1.", video: "#" },
+                    { topic: "Probability", q: "Prob. of getting 7 on two dice:", options: ["1/6", "1/12", "1/36", "5/36"], correct: 0, explanation: "Outcomes: (1,6), (2,5), (3,4), (4,3), (5,2), (6,1). Total 6/36 = 1/6.", video: "#" },
+                    // TOPIC: CALCULUS
+                    { topic: "Calculus", q: "Derivative of sin(x²) is:", options: ["cos(x²)", "2x cos(x²)", "2x sin(x²)", "-2x"], correct: 1, explanation: "Chain rule: cos(x²) * 2x.", video: "#" },
+                    { topic: "Calculus", q: "Integral of tan(x) is:", options: ["log|sec x|", "log|sin x|", "sec x", "tan x"], correct: 0, explanation: "Standard integral formula.", video: "#" },
+                    { topic: "Calculus", q: "Slope of tangent to y=x² at x=1:", options: ["1", "2", "3", "0"], correct: 1, explanation: "dy/dx = 2x. At x=1, slope is 2.", video: "#" },
+                    { topic: "Calculus", q: "Order of diff eq y'' + (y')^3 = 0:", options: ["1", "2", "3", "0"], correct: 1, explanation: "Highest derivative present is y'' (order 2).", video: "#" }
                 ],
                 Hard: [
-                    { q: "Find area bounded by y²=4ax and x²=4ay.", options: ["16a²/3", "8a²/3", "4a²/3", "16a²"], correct: 0, explanation: "Standard area formula for intersection of two parabolas is 16ab/3. Here a=b, so 16a²/3.", video: "#" },
-                    { q: "Maximum value of (1/x)^x is:", options: ["e", "e^(1/e)", "1", "0"], correct: 1, explanation: "Let y=(1/x)^x. Take log, differentiate, find critical point x=1/e. Substitute back to get e^(1/e).", video: "#" },
-                    { q: "If vectors a and b are orthogonal, then:", options: ["a.b = 0", "a x b = 0", "a+b = 0", "None"], correct: 0, explanation: "Dot product of perpendicular vectors is zero because cos(90) = 0.", video: "#" },
-                    { q: "Solution of dy/dx + y = e^-x is:", options: ["y = xe^-x + C", "y = e^-x + C", "y = x + C", "None"], correct: 0, explanation: "Linear Diff Eq. Integrating Factor is e^x. Solution is y(e^x) = ∫e^-x * e^x dx = ∫1 dx = x.", video: "#" },
-                    { q: "Shortest distance between lines r=a+λb and r=c+μd depends on:", options: ["(b x d).(c-a)", "b.d", "c.a", "Cross product only"], correct: 0, explanation: "Shortest distance formula involves the projection of the vector joining points on the cross product of direction vectors.", video: "#" }
+                    // TOPIC: VECTORS & 3D
+                    { topic: "Vectors & 3D", q: "If a.b = 0, vectors are:", options: ["Parallel", "Perpendicular", "Equal", "Unit"], correct: 1, explanation: "Dot product is zero for orthogonal vectors.", video: "#" },
+                    { topic: "Vectors & 3D", q: "Projection of a on b is:", options: ["a.b/|a|", "a.b/|b|", "a x b", "|a|"], correct: 1, explanation: "Scalar projection formula.", video: "#" },
+                    { topic: "Vectors & 3D", q: "Distance of point (x,y,z) from origin:", options: ["x+y+z", "√(x²+y²+z²)", "x²+y²+z²", "xyz"], correct: 1, explanation: "Distance formula.", video: "#" },
+                    { topic: "Vectors & 3D", q: "Direction cosines sum of squares (l²+m²+n²):", options: ["0", "1", "2", "3"], correct: 1, explanation: "Fundamental property of direction cosines.", video: "#" },
+                    // TOPIC: INTEGRATION
+                    { topic: "Integration", q: "Area bounded by y²=4ax and x²=4ay:", options: ["16a²/3", "8a²/3", "4a²/3", "16a²"], correct: 0, explanation: "Standard result for intersecting parabolas.", video: "#" },
+                    { topic: "Integration", q: "∫ e^x (f(x) + f'(x)) dx =", options: ["e^x f'(x)", "e^x f(x)", "f(x)", "e^x"], correct: 1, explanation: "Standard integration by parts property.", video: "#" },
+                    { topic: "Integration", q: "∫ from -a to a of odd function is:", options: ["2∫f(x)", "0", "a", "Infinity"], correct: 1, explanation: "Definite integral of odd function over symmetric interval is 0.", video: "#" },
+                    { topic: "Integration", q: "∫ dx / (x² - a²) is:", options: ["(1/2a) log|(x-a)/(x+a)|", "sin⁻¹(x/a)", "log|x+√(x²-a²)|", "tan⁻¹(x/a)"], correct: 0, explanation: "Standard formula.", video: "#" }
                 ]
             },
             Physics: {
                 Easy: [
-                    { q: "SI unit of Electric Charge is:", options: ["Ampere", "Coulomb", "Volt", "Ohm"], correct: 1, explanation: "Coulomb (C) is the standard SI unit of charge.", video: "#" },
-                    { q: "Resistance of an ideal ammeter is:", options: ["Infinite", "Zero", "100 Ohm", "1 Ohm"], correct: 1, explanation: "Ideal ammeters should not affect current, so resistance must be zero.", video: "#" },
-                    { q: "Light is which type of wave?", options: ["Longitudinal", "Transverse", "Mechanical", "Static"], correct: 1, explanation: "Light is an electromagnetic wave, which is transverse in nature.", video: "#" },
-                    { q: "Focal length of plane mirror is:", options: ["0", "Infinity", "1", "-1"], correct: 1, explanation: "Parallel rays remain parallel after reflection, so focus is at infinity.", video: "#" },
-                    { q: "Charge on a neutron is:", options: ["+1.6x10^-19", "-1.6x10^-19", "Zero", "1"], correct: 2, explanation: "Neutrons are neutral particles found in the nucleus.", video: "#" }
+                    // TOPIC: ELECTROSTATICS
+                    { topic: "Electrostatics", q: "SI unit of Charge:", options: ["Ampere", "Coulomb", "Volt", "Joule"], correct: 1, explanation: "Coulomb (C) is the unit.", video: "#" },
+                    { topic: "Electrostatics", q: "Force between charges follows:", options: ["Ohm's Law", "Coulomb's Law", "Ampere's Law", "Lenz Law"], correct: 1, explanation: "Inverse square law for charges.", video: "#" },
+                    { topic: "Electrostatics", q: "Electric field inside conductor:", options: ["Maximum", "Zero", "Uniform", "Infinite"], correct: 1, explanation: "Charges reside on surface, field inside is zero.", video: "#" },
+                    { topic: "Electrostatics", q: "Unit of Electric Potential:", options: ["Joule", "Newton", "Volt", "Watt"], correct: 2, explanation: "Volt (Joules/Coulomb).", video: "#" },
+                    // TOPIC: OPTICS
+                    { topic: "Optics", q: "Focal length of plane mirror:", options: ["0", "Infinity", "10cm", "-10cm"], correct: 1, explanation: "Rays never converge.", video: "#" },
+                    { topic: "Optics", q: "Mirage is due to:", options: ["Reflection", "Refraction", "TIR", "Diffraction"], correct: 2, explanation: "Total Internal Reflection.", video: "#" },
+                    { topic: "Optics", q: "Lens formula:", options: ["1/v - 1/u = 1/f", "1/v + 1/u = 1/f", "v = u", "None"], correct: 0, explanation: "Standard thin lens formula.", video: "#" },
+                    { topic: "Optics", q: "Power of lens unit:", options: ["Watt", "Diopter", "Meter", "Lumen"], correct: 1, explanation: "Diopter (D) = 1/f(m).", video: "#" }
                 ],
                 Medium: [
-                    { q: "Electric flux through a closed surface depends on:", options: ["Shape", "Size", "Charge Enclosed", "Location"], correct: 2, explanation: "Gauss's Law states Flux = q_enclosed / ε₀.", video: "#" },
-                    { q: "Interference is shown by:", options: ["Longitudinal", "Transverse", "Both", "Neither"], correct: 2, explanation: "Interference is a wave property shown by both sound (longitudinal) and light (transverse).", video: "#" },
-                    { q: "Hydrogen series in visible region:", options: ["Lyman", "Balmer", "Paschen", "Brackett"], correct: 1, explanation: "Balmer series corresponds to transitions to n=2, lying in the visible spectrum.", video: "#" },
-                    { q: "SI Unit of Magnetic Flux:", options: ["Tesla", "Weber", "Gauss", "Henry"], correct: 1, explanation: "Weber (Wb) is the SI unit. Tesla is for field strength.", video: "#" },
-                    { q: "A transformer works on:", options: ["DC", "AC", "Both", "Batteries"], correct: 1, explanation: "Transformers require changing magnetic flux, which is only provided by AC.", video: "#" }
+                    // TOPIC: MAGNETISM
+                    { topic: "Magnetism", q: "SI Unit of Magnetic Field:", options: ["Weber", "Tesla", "Gauss", "Henry"], correct: 1, explanation: "Tesla (T).", video: "#" },
+                    { topic: "Magnetism", q: "Moving charge produces:", options: ["Electric Field", "Magnetic Field", "Both", "None"], correct: 2, explanation: "Current produces magnetic field, charge has electric field.", video: "#" },
+                    { topic: "Magnetism", q: "Lorentz Force formula:", options: ["qE", "q(v x B)", "qE + q(v x B)", "ma"], correct: 2, explanation: "Sum of electric and magnetic forces.", video: "#" },
+                    { topic: "Magnetism", q: "Cyclotron frequency depends on:", options: ["Speed", "Radius", "Charge/Mass", "None"], correct: 2, explanation: "f = qB/2πm.", video: "#" },
+                    // TOPIC: OPTICS
+                    { topic: "Optics", q: "Interference proves light is:", options: ["Particle", "Wave", "Ray", "String"], correct: 1, explanation: "Wave nature is required for interference.", video: "#" },
+                    { topic: "Optics", q: "Young's Modulus relates to:", options: ["Light", "Sound", "Elasticity", "Fluids"], correct: 2, explanation: "Trick question! Young's Modulus is elasticity, Young's Experiment is light.", video: "#" },
+                    { topic: "Optics", q: "Brewster's Angle relates to:", options: ["Polarization", "Interference", "Diffraction", "Refraction"], correct: 0, explanation: "Angle for complete polarization.", video: "#" },
+                    { topic: "Optics", q: "Resolving power of telescope depends on:", options: ["Length", "Aperture", "Eyepiece", "Height"], correct: 1, explanation: "Larger aperture (D) increases resolution (1.22λ/D).", video: "#" }
                 ],
                 Hard: [
-                    { q: "Work done in rotating a dipole in electric field from 0 to 180 deg:", options: ["pE", "2pE", "0", "-pE"], correct: 1, explanation: "W = pE(cos 0 - cos 180) = pE(1 - (-1)) = 2pE.", video: "#" },
-                    { q: "If speed of light in medium is 2x10^8 m/s, Refractive Index is:", options: ["1.5", "1.33", "2.0", "1.0"], correct: 0, explanation: "μ = c/v = (3x10^8) / (2x10^8) = 1.5.", video: "#" },
-                    { q: "Phase difference in LCR series resonance circuit is:", options: ["0", "90", "180", "45"], correct: 0, explanation: "At resonance, XL = XC, so the circuit becomes purely resistive. Phase diff is 0.", video: "#" },
-                    { q: "Radius of path of electron in magnetic field depends on:", options: ["Mass only", "Velocity only", "Momentum/Charge", "None"], correct: 2, explanation: "r = mv/qB. It depends on momentum (mv) and charge (q).", video: "#" },
-                    { q: "Binding energy per nucleon is maximum for:", options: ["H", "Fe", "U", "He"], correct: 1, explanation: "Iron (Fe-56) has the most stable nucleus with max binding energy per nucleon.", video: "#" }
+                    // TOPIC: EMI & AC
+                    { topic: "EMI & AC", q: "Lenz's Law is conservation of:", options: ["Charge", "Momentum", "Energy", "Mass"], correct: 2, explanation: "Induced emf opposes change, conserving energy.", video: "#" },
+                    { topic: "EMI & AC", q: "Power factor at resonance:", options: ["0", "0.5", "1", "Infinity"], correct: 2, explanation: "Circuit is purely resistive, cos(0) = 1.", video: "#" },
+                    { topic: "EMI & AC", q: "Transformer core is laminated to:", options: ["Reduce Eddy Currents", "Increase B", "Reduce Hysteresis", "Look cool"], correct: 0, explanation: "Laminations increase resistance to eddy currents.", video: "#" },
+                    { topic: "EMI & AC", q: "Impedance of LCR circuit:", options: ["R", "XL-XC", "√[R²+(XL-XC)²]", "R+XL+XC"], correct: 2, explanation: "Phasor sum of resistance and reactance.", video: "#" },
+                    // TOPIC: MODERN PHYSICS
+                    { topic: "Modern Physics", q: "Photoelectric effect proves:", options: ["Wave nature", "Particle nature", "Dual nature", "None"], correct: 1, explanation: "Light acts as packets (photons).", video: "#" },
+                    { topic: "Modern Physics", q: "Binding energy per nucleon max for:", options: ["He", "Fe", "U", "H"], correct: 1, explanation: "Iron-56 is the most stable.", video: "#" },
+                    { topic: "Modern Physics", q: "Half life relates to mean life by:", options: ["T = 0.693τ", "T = τ", "T = 1/τ", "T = 2τ"], correct: 0, explanation: "ln(2) factor.", video: "#" },
+                    { topic: "Modern Physics", q: "Lyman series lies in:", options: ["Visible", "UV", "IR", "Microwave"], correct: 1, explanation: "Transitions to n=1 (High energy UV).", video: "#" }
                 ]
             },
             Chemistry: {
                 Easy: [
-                    { q: "Formula of Rust is:", options: ["Fe2O3.xH2O", "FeO", "Fe3O4", "FeCO3"], correct: 0, explanation: "Rust is hydrated iron(III) oxide.", video: "#" },
-                    { q: "Which is a noble gas?", options: ["O", "N", "He", "Cl"], correct: 2, explanation: "Helium (He) has a full valence shell and is inert.", video: "#" },
-                    { q: "Molarity depends on:", options: ["Mass", "Volume", "Temperature", "Pressure"], correct: 2, explanation: "Molarity involves volume, and volume changes with temperature.", video: "#" },
-                    { q: "pH of pure water is:", options: ["0", "14", "7", "1"], correct: 2, explanation: "Pure water is neutral, so pH is 7.", video: "#" },
-                    { q: "Functional group of Alcohol:", options: ["-OH", "-CHO", "-COOH", "-CO-"], correct: 0, explanation: "-OH is the hydroxyl group representing alcohols.", video: "#" }
+                    // TOPIC: SOLUTIONS
+                    { topic: "Solutions", q: "Molarity unit is:", options: ["mol/kg", "mol/L", "g/L", "mol"], correct: 1, explanation: "Moles per Liter.", video: "#" },
+                    { topic: "Solutions", q: "Henry's Law relates to:", options: ["Gas solubility", "Solid solubility", "Freezing point", "Osmosis"], correct: 0, explanation: "Partial pressure proportional to mole fraction.", video: "#" },
+                    { topic: "Solutions", q: "Colligative properties depend on:", options: ["Nature of solute", "Number of particles", "Color", "Smell"], correct: 1, explanation: "Only quantity matters, not identity.", video: "#" },
+                    { topic: "Solutions", q: "Osmotic pressure is denoted by:", options: ["P", "π", "ΔT", "Kb"], correct: 1, explanation: "π = CRT.", video: "#" },
+                    // TOPIC: ELECTROCHEMISTRY
+                    { topic: "Electrochemistry", q: "Anode in Galvanic cell is:", options: ["Positive", "Negative", "Neutral", "AC"], correct: 1, explanation: "Oxidation occurs at anode (source of electrons).", video: "#" },
+                    { topic: "Electrochemistry", q: "Unit of Conductance:", options: ["Ohm", "Siemens", "Volt", "Ampere"], correct: 1, explanation: "Inverse of resistance (Mho or Siemens).", video: "#" },
+                    { topic: "Electrochemistry", q: "Standard Hydrogen Electrode potential:", options: ["1 V", "0 V", "10 V", "-1 V"], correct: 1, explanation: "Defined as exactly zero volts.", video: "#" },
+                    { topic: "Electrochemistry", q: "Corrosion of iron is called:", options: ["Tarnishing", "Rusting", "Fusion", "Reduction"], correct: 1, explanation: "Formation of hydrated iron oxide.", video: "#" }
                 ],
                 Medium: [
-                    { q: "NaCl shows which defect?", options: ["Schottky", "Frenkel", "Both", "None"], correct: 0, explanation: "Schottky defect is common in ionic compounds with high coordination numbers like NaCl.", video: "#" },
-                    { q: "Oxidation of Ni in [Ni(CO)₄]:", options: ["+2", "0", "+4", "-2"], correct: 1, explanation: "CO is a neutral ligand (charge 0). So Ni oxidation state is 0.", video: "#" },
-                    { q: "Strongest acid:", options: ["HCOOH", "CH₃COOH", "ClCH₂COOH", "Cl₃CCOOH"], correct: 3, explanation: "Electron withdrawing groups (-Cl) increase acidity. Cl3CCOOH has 3 Cl atoms.", video: "#" },
-                    { q: "Unit of zero order rate constant:", options: ["mol L⁻¹ s⁻¹", "s⁻¹", "L mol⁻¹", "mol⁻¹"], correct: 0, explanation: "Rate = k[A]⁰ = k. So unit of k is unit of Rate (conc/time).", video: "#" },
-                    { q: "Which vitamin contains Cobalt?", options: ["Vit A", "Vit B12", "Vit C", "Vit D"], correct: 1, explanation: "Vitamin B12 is also known as Cyanocobalamin.", video: "#" }
+                    // TOPIC: KINETICS
+                    { topic: "Kinetics", q: "Order of radioactive decay:", options: ["Zero", "First", "Second", "Third"], correct: 1, explanation: "Nuclear decay follows first order kinetics.", video: "#" },
+                    { topic: "Kinetics", q: "Unit of zero order rate constant:", options: ["s⁻¹", "mol L⁻¹ s⁻¹", "L mol⁻¹ s⁻¹", "None"], correct: 1, explanation: "Rate = k. Units match Rate.", video: "#" },
+                    { topic: "Kinetics", q: "Activation energy is calculated by:", options: ["Arrhenius Eq", "Nernst Eq", "Bragg's Eq", "Henry's Law"], correct: 0, explanation: "k = Ae^(-Ea/RT).", video: "#" },
+                    { topic: "Kinetics", q: "Catalyst changes:", options: ["Gibbs Energy", "Enthalpy", "Activation Energy", "Equilibrium Constant"], correct: 2, explanation: "Lowers the barrier (Ea).", video: "#" },
+                    // TOPIC: COORDINATION
+                    { topic: "Coordination", q: "Ligand in [Ni(CO)4]:", options: ["Nickel", "Carbon", "Carbon Monoxide", "Oxygen"], correct: 2, explanation: "CO is the ligand.", video: "#" },
+                    { topic: "Coordination", q: "EDTA is a ligand of type:", options: ["Monodentate", "Bidentate", "Hexadentate", "Tridentate"], correct: 2, explanation: "Forms 6 bonds (hexadentate).", video: "#" },
+                    { topic: "Coordination", q: "Hybridization of [Co(NH3)6]3+:", options: ["sp3", "dsp2", "sp3d2", "d2sp3"], correct: 3, explanation: "Inner orbital octahedral complex.", video: "#" },
+                    { topic: "Coordination", q: "Oxidation state of Fe in K4[Fe(CN)6]:", options: ["+2", "+3", "0", "+4"], correct: 0, explanation: "4(+1) + x + 6(-1) = 0 => x = +2.", video: "#" }
                 ],
                 Hard: [
-                    { q: "Half life of a reaction is independent of initial conc. Order is:", options: ["0", "1", "2", "3"], correct: 1, explanation: "For 1st order, t1/2 = 0.693/k, which has no concentration term.", video: "#" },
-                    { q: "Product of Lucas Reagent test with tertiary alcohol:", options: ["Turbidity immediately", "No reaction", "Red Color", "Blue Color"], correct: 0, explanation: "Tertiary carbocations are stable, reacting instantly with Lucas Reagent.", video: "#" },
-                    { q: "Geometry of XeF4 is:", options: ["Tetrahedral", "Square Planar", "Octahedral", "Linear"], correct: 1, explanation: "Xe has 4 bonds and 2 lone pairs. Sp3d2 hybridization leads to Square Planar shape.", video: "#" },
-                    { q: "Which isomerism is shown by [Co(NH3)5SO4]Br?", options: ["Linkage", "Ionisation", "Coordination", "Optical"], correct: 1, explanation: "Exchange of ions inside and outside coordination sphere (SO4 vs Br) causes Ionisation isomerism.", video: "#" },
-                    { q: "In SN1 reaction, the intermediate is:", options: ["Carbocation", "Carbanion", "Free Radical", "Transition State"], correct: 0, explanation: "SN1 is a two-step process involving formation of a stable Carbocation.", video: "#" }
+                    // TOPIC: ORGANIC (ALDEHYDES)
+                    { topic: "Aldehydes", q: "Tollens' reagent contains:", options: ["Cu", "Ag", "Fe", "Zn"], correct: 1, explanation: "Ammoniacal Silver Nitrate.", video: "#" },
+                    { topic: "Aldehydes", q: "Aldol condensation requires:", options: ["Alpha-H", "Beta-H", "Gamma-H", "No H"], correct: 0, explanation: "Acidity of alpha-hydrogen is key.", video: "#" },
+                    { topic: "Aldehydes", q: "Product of Rosenmund reduction:", options: ["Alcohol", "Aldehyde", "Acid", "Ester"], correct: 1, explanation: "Acid chloride -> Aldehyde.", video: "#" },
+                    { topic: "Aldehydes", q: "Iodoform test detects:", options: ["-COOH", "CH3-CO- group", "-NH2", "-O-"], correct: 1, explanation: "Methyl ketones give positive test.", video: "#" },
+                    // TOPIC: PHYSICAL (SURFACE)
+                    { topic: "Surface Chem", q: "Tyndall effect is shown by:", options: ["True Solution", "Colloid", "Suspension", "Gas"], correct: 1, explanation: "Scattering of light by colloidal particles.", video: "#" },
+                    { topic: "Surface Chem", q: "Gold Number measures:", options: ["Amount of Gold", "Protective power", "Purity", "Weight"], correct: 1, explanation: "Protection power of lyophilic colloids.", video: "#" },
+                    { topic: "Surface Chem", q: "Catalyst used in Haber process:", options: ["Fe", "V2O5", "Ni", "Pt"], correct: 0, explanation: "Iron is used for Ammonia synthesis.", video: "#" },
+                    { topic: "Surface Chem", q: "Physical adsorption is:", options: ["Irreversible", "Reversible", "Specific", "High Temp"], correct: 1, explanation: "Weak Van der Waals forces allow reversal.", video: "#" }
                 ]
             },
             Biology: {
                 Easy: [
-                    { q: "Powerhouse of the cell:", options: ["Nucleus", "Mitochondria", "Ribosome", "Golgi"], correct: 1, explanation: "Mitochondria generates ATP through respiration.", video: "#" },
-                    { q: "DNA stands for:", options: ["Deoxyribonucleic Acid", "Dual Nitrogen Acid", "Direct New Acid", "None"], correct: 0, explanation: "It is the molecule that carries genetic instructions.", video: "#" },
-                    { q: "Human heart has how many chambers?", options: ["2", "3", "4", "5"], correct: 2, explanation: "2 Atria and 2 Ventricles.", video: "#" },
-                    { q: "Unit of Kidney is:", options: ["Neuron", "Nephron", "Alveoli", "Villi"], correct: 1, explanation: "Nephron is the structural and functional filtration unit.", video: "#" },
-                    { q: "Universal Blood Donor:", options: ["A", "B", "AB", "O-"], correct: 3, explanation: "O Negative blood lacks A, B, and Rh antigens.", video: "#" }
+                    // TOPIC: CELL BIO
+                    { topic: "Cell Bio", q: "Powerhouse of cell:", options: ["Nucleus", "Mitochondria", "Golgi", "Ribosome"], correct: 1, explanation: "ATP synthesis site.", video: "#" },
+                    { topic: "Cell Bio", q: "Protein factory of cell:", options: ["Lysosome", "Ribosome", "Vacuole", "SER"], correct: 1, explanation: "Ribosomes synthesize proteins.", video: "#" },
+                    { topic: "Cell Bio", q: "Suicide bag of cell:", options: ["Lysosome", "Plastid", "Nucleolus", "Centriole"], correct: 0, explanation: "Contains hydrolytic enzymes.", video: "#" },
+                    { topic: "Cell Bio", q: "Plant cell wall made of:", options: ["Chitin", "Cellulose", "Protein", "Lipid"], correct: 1, explanation: "Cellulose provides structure.", video: "#" },
+                    // TOPIC: PHYSIOLOGY
+                    { topic: "Physiology", q: "Unit of Kidney:", options: ["Neuron", "Nephron", "Alveoli", "Villi"], correct: 1, explanation: "Functional filtration unit.", video: "#" },
+                    { topic: "Physiology", q: "Universal Donor:", options: ["AB+", "O-", "A+", "B-"], correct: 1, explanation: "O- lacks antigens.", video: "#" },
+                    { topic: "Physiology", q: "Bile is produced in:", options: ["Gall bladder", "Liver", "Stomach", "Pancreas"], correct: 1, explanation: "Produced in liver, stored in gall bladder.", video: "#" },
+                    { topic: "Physiology", q: "Smallest bone in human body:", options: ["Femur", "Stapes", "Tibia", "Radius"], correct: 1, explanation: "Located in the ear.", video: "#" }
                 ],
                 Medium: [
-                    { q: "Which is a restriction endonuclease?", options: ["Ligase", "Hind II", "Protease", "RNase"], correct: 1, explanation: "Hind II was the first restriction endonuclease discovered.", video: "#" },
-                    { q: "Megaspores formation process:", options: ["Megasporogenesis", "Microsporogenesis", "Parthenocarpy", "Apomixis"], correct: 0, explanation: "Formation of megaspores from megaspore mother cell is Megasporogenesis.", video: "#" },
-                    { q: "Antibody in colostrum:", options: ["IgG", "IgM", "IgA", "IgE"], correct: 2, explanation: "IgA provides passive immunity to the infant.", video: "#" },
-                    { q: "Golden Rice is rich in:", options: ["Omega 3", "Vitamin A", "Vitamin C", "Vitamin K"], correct: 1, explanation: "It is genetically modified to produce beta-carotene (Vitamin A precursor).", video: "#" },
-                    { q: "Leydig cells secrete:", options: ["Insulin", "Glucagon", "Androgens", "Estrogen"], correct: 2, explanation: "Leydig cells in testes produce Androgens (Testosterone).", video: "#" }
+                    // TOPIC: GENETICS
+                    { topic: "Genetics", q: "Father of Genetics:", options: ["Darwin", "Mendel", "Watson", "Lamarck"], correct: 1, explanation: "Gregor Mendel.", video: "#" },
+                    { topic: "Genetics", q: "DNA structure is:", options: ["Single Helix", "Double Helix", "Triple Helix", "Ladder"], correct: 1, explanation: "Watson & Crick model.", video: "#" },
+                    { topic: "Genetics", q: "Codon for Methionine (Start):", options: ["AUG", "UAA", "UAG", "UGA"], correct: 0, explanation: "AUG initiates translation.", video: "#" },
+                    { topic: "Genetics", q: "Down's syndrome is trisomy of:", options: ["21st", "18th", "13th", "X"], correct: 0, explanation: "Extra copy of chromosome 21.", video: "#" },
+                    // TOPIC: BIOTECH
+                    { topic: "Biotech", q: "PCR used for:", options: ["Protein synthesis", "DNA amplification", "Respiration", "Digestion"], correct: 1, explanation: "Polymerase Chain Reaction amplifies DNA.", video: "#" },
+                    { topic: "Biotech", q: "Molecular Scissors:", options: ["Ligase", "Restriction Enzyme", "Polymerase", "Helicase"], correct: 1, explanation: "Cuts DNA at specific sites.", video: "#" },
+                    { topic: "Biotech", q: "Golden Rice is rich in:", options: ["Vit A", "Vit C", "Iron", "Calcium"], correct: 0, explanation: "Beta-carotene enriched.", video: "#" },
+                    { topic: "Biotech", q: "Bt in Bt-Cotton stands for:", options: ["Biotech", "Bacillus thuringiensis", "Beta type", "Bacteria"], correct: 1, explanation: "The bacteria producing the toxin.", video: "#" }
                 ],
                 Hard: [
-                    { q: "Which codon acts as Start Codon?", options: ["UAA", "UAG", "AUG", "UGA"], correct: 2, explanation: "AUG codes for Methionine and initiates translation.", video: "#" },
-                    { q: "PCR technique was invented by:", options: ["Kary Mullis", "Watson", "Crick", "Mendel"], correct: 0, explanation: "Kary Mullis developed Polymerase Chain Reaction in 1983.", video: "#" },
-                    { q: "Interaction where one benefits and other is harmed:", options: ["Mutualism", "Commensalism", "Parasitism", "Amensalism"], correct: 2, explanation: "Parasitism benefits the parasite at the expense of the host.", video: "#" },
-                    { q: "Pollen grains are stored in liquid nitrogen at:", options: ["0°C", "-100°C", "-196°C", "-273°C"], correct: 2, explanation: "Cryopreservation occurs at -196°C for long term storage.", video: "#" },
-                    { q: "Transcription occurs in:", options: ["Cytoplasm", "Nucleus", "Ribosome", "Golgi Body"], correct: 1, explanation: "DNA to mRNA transcription happens inside the Nucleus in eukaryotes.", video: "#" }
+                    // TOPIC: ECOLOGY
+                    { topic: "Ecology", q: "Pyramid of Energy is always:", options: ["Inverted", "Upright", "Spindle", "Variable"], correct: 1, explanation: "10% law ensures energy decreases up trophic levels.", video: "#" },
+                    { topic: "Ecology", q: "Interaction (+, -) is:", options: ["Mutualism", "Commensalism", "Parasitism", "Competition"], correct: 2, explanation: "One benefits, other harmed.", video: "#" },
+                    { topic: "Ecology", q: "Montreal Protocol protects:", options: ["Water", "Ozone Layer", "Forests", "Tigers"], correct: 1, explanation: "Phasing out CFCs.", video: "#" },
+                    { topic: "Ecology", q: "Natality refers to:", options: ["Death rate", "Birth rate", "Migration", "Growth"], correct: 1, explanation: "Birth rate in a population.", video: "#" },
+                    // TOPIC: EVOLUTION
+                    { topic: "Evolution", q: "Theory of Natural Selection:", options: ["Mendel", "Darwin", "Lamarck", "Pasteur"], correct: 1, explanation: "Survival of the fittest.", video: "#" },
+                    { topic: "Evolution", q: "Analogous organs have:", options: ["Same origin", "Different origin, same function", "Same origin, diff function", "None"], correct: 1, explanation: "Convergent evolution (e.g., wings of bird and insect).", video: "#" },
+                    { topic: "Evolution", q: "Connecting link between reptiles and birds:", options: ["Platypus", "Archaeopteryx", "Bat", "Whale"], correct: 1, explanation: "Fossil showing features of both.", video: "#" },
+                    { topic: "Evolution", q: "Hardy-Weinberg eq:", options: ["p+q=1", "p²+2pq+q²=1", "Both", "None"], correct: 2, explanation: "Algebraic representation of equilibrium.", video: "#" }
                 ]
             }
         };
@@ -652,6 +749,7 @@
         // --- 3. STATE MANAGEMENT ---
         let currentSubject = '';
         let currentLevel = '';
+        let currentTopic = '';
 
         // --- 4. VIEW TRANSITIONS ---
         function showDifficultySelection(subject) {
@@ -663,18 +761,52 @@
             window.scrollTo(0,0);
         }
 
-        function startLevel(level) {
+        function showTopicSelection(level) {
             currentLevel = level;
+            
+            // Generate Topics based on available questions for this Subject + Level
+            const questions = quizData[currentSubject][currentLevel];
+            // Extract unique topics
+            const topics = [...new Set(questions.map(q => q.topic))];
+            
+            const topicGrid = document.getElementById('topic-grid');
+            topicGrid.innerHTML = '';
+            
+            document.getElementById('topic-subtitle').innerText = `${currentSubject} - ${level} Mode`;
+
+            topics.forEach(topic => {
+                // Count questions for this topic
+                const count = questions.filter(q => q.topic === topic).length;
+                
+                const card = document.createElement('div');
+                card.className = 'topic-card';
+                card.onclick = () => startTopicQuiz(topic);
+                card.innerHTML = `
+                    <i class="fa-solid fa-folder-open topic-icon"></i>
+                    <div class="topic-name">${topic}</div>
+                    <div class="topic-count">${count} Question${count > 1 ? 's' : ''}</div>
+                `;
+                topicGrid.appendChild(card);
+            });
+
+            document.getElementById('difficulty-view').classList.remove('active');
+            document.getElementById('topic-view').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function startTopicQuiz(topic) {
+            currentTopic = topic;
+            
             const levelTitles = {
                 'Easy': 'Hawkins High (Easy)',
                 'Medium': 'The Upside Down (Medium)',
                 'Hard': 'Vecna\'s Curse (Hard)'
             };
 
-            document.getElementById('quiz-subject-header').innerText = currentSubject;
-            document.getElementById('quiz-level-indicator').innerText = levelTitles[level];
+            document.getElementById('quiz-subject-header').innerText = `${currentSubject}: ${topic}`;
+            document.getElementById('quiz-level-indicator').innerText = levelTitles[currentLevel];
 
-            document.getElementById('difficulty-view').classList.remove('active');
+            document.getElementById('topic-view').classList.remove('active');
             document.getElementById('quiz-view').classList.add('active');
             window.scrollTo(0,0);
 
@@ -685,9 +817,11 @@
             const wrapper = document.getElementById('questions-wrapper');
             wrapper.innerHTML = '';
 
-            const questions = quizData[currentSubject][currentLevel];
+            // Filter questions by Topic
+            const allQuestions = quizData[currentSubject][currentLevel];
+            const filteredQuestions = allQuestions.filter(q => q.topic === currentTopic);
 
-            questions.forEach((item, i) => {
+            filteredQuestions.forEach((item, i) => {
                 const qNum = i + 1;
                 const div = document.createElement('div');
                 div.className = 'question-box';
@@ -725,11 +859,14 @@
         }
 
         function submitQuiz() {
-            const questions = quizData[currentSubject][currentLevel];
+            // Get filtered questions again to grade
+            const allQuestions = quizData[currentSubject][currentLevel];
+            const filteredQuestions = allQuestions.filter(q => q.topic === currentTopic);
+            
             let score = 0;
-            let total = questions.length;
+            let total = filteredQuestions.length;
 
-            questions.forEach((q, index) => {
+            filteredQuestions.forEach((q, index) => {
                 const qNum = index + 1;
                 const selectedInput = document.querySelector(`input[name="q${qNum}"]:checked`);
                 const userChoice = selectedInput ? parseInt(selectedInput.value) : -1;
@@ -769,7 +906,7 @@
             scoreArea.innerHTML = `<div class="score-display" style="color:${scoreColor}">${score} / ${total}</div>`;
             
             if (score === total) {
-                msgArea.innerText = `Outstanding! You survived ${currentLevel} mode unscathed.`;
+                msgArea.innerText = `Outstanding! You survived the ${currentTopic} mission unscathed.`;
             } else if (score > total / 2) {
                 msgArea.innerText = "Good work. Check the debriefs below to improve.";
             } else {
@@ -784,13 +921,20 @@
         }
 
         function backToDiff() {
-            document.getElementById('quiz-view').classList.remove('active');
+            document.getElementById('topic-view').classList.remove('active');
             document.getElementById('difficulty-view').classList.add('active');
+            window.scrollTo(0,0);
+        }
+        
+        function backToTopic() {
+            document.getElementById('quiz-view').classList.remove('active');
+            document.getElementById('topic-view').classList.add('active');
             window.scrollTo(0,0);
         }
 
         function goHome() {
             document.getElementById('difficulty-view').classList.remove('active');
+            document.getElementById('topic-view').classList.remove('active');
             document.getElementById('quiz-view').classList.remove('active');
             document.getElementById('dashboard-view').classList.add('active');
             window.scrollTo(0,0);
