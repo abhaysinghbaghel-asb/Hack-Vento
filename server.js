@@ -6,82 +6,102 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path = require('path');
 
 const app = express();
-const server = http.createServer(app); // Create standard HTTP server
+const server = http.createServer(app);
 
-// --- CONFIGURATION ---
+// --- 1. CONFIGURATION ---
 const API_KEY = process.env.GEMINI_API_KEY; 
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-// --- SERVE THE FRONTEND ---
-// This tells the server: "When someone visits the URL, send them index.html"
+const model = genAI.getGenerativeModel({ 
+    model: "gemini-2.5-flash-lite",
+    systemInstruction: "You are a knowledgeable, slightly 80s-themed Science Tutor. Context is key: always look at the chat history to understand what the user is referring to. Answer questions in 2 sentences max. If the topic is dangerous, politely decline."
+});
+
+// --- 2. MEMORY STORAGE (The Fix) ---
+// We store the conversation history here so the AI remembers context
+let chatHistory = []; 
+
+// --- 3. SERVE FILES ---
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'discussionpanel.html'));
 });
 
-// --- WEBSOCKET SETUP ---
-// Attach WebSocket to the same HTTP server
+// --- 4. WEBSOCKET SERVER ---
 const wss = new WebSocketServer({ server });
 
 console.log("------------------------------------------------");
-console.log("🚀 UPSIDE DOWN SERVER (Hybrid AI Mode) STARTED");
+console.log("🚀 UPSIDE DOWN SERVER (With Memory) RUNNING");
 console.log("------------------------------------------------");
 
 wss.on('connection', (ws) => {
-    console.log("New client connected!");
+    console.log("🔌 New Survivor Connected");
 
     ws.on('message', async (message) => {
         let userPost;
         try {
             userPost = JSON.parse(message);
-        } catch (e) {
-            return; // Ignore bad data
-        }
-        
-        // Broadcast question immediately
+        } catch (e) { return; }
+
+        // 1. Broadcast the User's Question immediately
         broadcast(userPost);
 
-        // AI LOGIC
-        try {
-            if (!API_KEY) throw new Error("No API Key");
+        // 2. AI LOGIC
+        if (userPost.role !== "AI Tutor" && userPost.content.length > 1) {
+            
+            try {
+                if (!API_KEY) throw new Error("No API Key configured");
 
-            const result = await model.generateContent(`
-                You are a helpful tutor. 
-                Question: "${userPost.content}"
-                Keep answer short (max 2 sentences).
-            `);
-            const response = await result.response;
-            sendAiResponse(response.text());
+                // A. Initialize Chat with History
+                const chat = model.startChat({
+                    history: chatHistory, // <--- This passes the previous context!
+                });
 
-        } catch (error) {
-            console.error("AI Error:", error.message);
-            // Fallback if AI fails
-            setTimeout(() => sendAiResponse("Thinking is hard right now... try again later!"), 1000);
-        }
+                // B. Send the new message
+                const result = await chat.sendMessage(userPost.content);
+                const response = await result.response;
+                const aiText = response.text();
 
-        function sendAiResponse(text) {
-            broadcast({
-                id: Date.now() + 1,
-                author: "Gemini AI",
-                role: "AI Tutor",
-                title: "Answer",
-                content: text,
-                likes: 0, replies: 0, time: "Just now", isSolved: true, avatar: "🤖"
-            });
+                // C. Update History Manually (So it persists for the NEXT message)
+                // We keep the history limited to the last 10 turns to save RAM/Tokens
+                if(chatHistory.length > 20) chatHistory.shift(); 
+                chatHistory.push({ role: "user", parts: [{ text: userPost.content }] });
+                chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+
+                // D. Send Response
+                sendAiResponse(aiText);
+
+            } catch (error) {
+                console.error("❌ AI Error:", error.message);
+                // Fallback
+                setTimeout(() => sendAiResponse("Interference from the Upside Down... try again."), 1000);
+            }
         }
     });
+
+    function sendAiResponse(text) {
+        const aiResponseData = {
+            id: Date.now() + 999,
+            author: "Gemini",
+            role: "AI Tutor",
+            title: "Tutor Response",
+            content: text,
+            likes: 0, replies: 0, time: "Just now", isSolved: true, avatar: "🤖"
+        };
+        broadcast(aiResponseData);
+    }
 });
 
 function broadcast(data) {
     wss.clients.forEach((client) => {
-        if (client.readyState === 1) client.send(JSON.stringify(data));
+        if (client.readyState === 1) {
+            client.send(JSON.stringify(data));
+        }
     });
 }
 
-// Start the server on the port Render assigns, or 8080 locally
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`✅ Server listening on http://localhost:${PORT}`);
 });
