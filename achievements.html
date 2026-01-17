@@ -24,6 +24,10 @@
         .text-red { color: #ff0f0f; }
         .text-blue { color: #0f8fff; }
         .text-purple { color: #a80fff; }
+        
+        /* UPDATED: Softer, less intense green */
+        .text-green { color: #2ecc71; } 
+
         .text-muted { color: #666; }
         .icon-spacer { margin-right: 10px; }
 
@@ -117,7 +121,12 @@
             content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
             background: inherit; filter: blur(4px); opacity: 0.7;
         }
-        .bar-red { background: #ff0f0f; } .bar-blue { background: #0f8fff; }
+        
+        .bar-red { background: #ff0f0f; } 
+        .bar-blue { background: #0f8fff; } 
+        
+        /* UPDATED: Softer Emerald Green */
+        .bar-green { background: #2ecc71; }
 
         /* Certificates */
         .cert-item {
@@ -241,9 +250,9 @@
                 { title: "Perfectionist", desc: "100% accuracy for a week", rarity: "Epic", icon: "fa-ribbon", colorClass: "text-purple" }
             ],
             milestones: [
-                { title: "First Steps", desc: "Complete your first task", current: 1, target: 1, barColor: "bar-red" },
-                { title: "Getting Started", desc: "Study for 10 hours", current: 10, target: 10, barColor: "bar-red" },
-                { title: "On a Roll", desc: "Complete 25 tasks", current: 25, target: 25, barColor: "bar-red" },
+                { title: "First Steps", desc: "Complete your first task", current: 1, target: 1, barColor: "bar-green" },
+                { title: "Getting Started", desc: "Study for 10 hours", current: 10, target: 10, barColor: "bar-green" },
+                { title: "On a Roll", desc: "Complete 25 tasks", current: 25, target: 25, barColor: "bar-green" },
                 { title: "Dedicated Learner", desc: "Study for 50 hours", current: 42, target: 50, barColor: "bar-blue" }
             ],
             certificates: [
