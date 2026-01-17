@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -846,7 +846,8 @@
             }
             const last=getPoint(data.length-1); ctx.lineTo(last.x, last.y);
             const gradient=ctx.createLinearGradient(0,padTop,0,H);
-            gradient.addColorStop(0,'rgba(255, 59, 59, 0.5)'); gradient.addColorStop(1,'rgba(255, 59, 59, 0)');
+            gradient.addColorStop(0,'rgba(0, 100, 0, 0.5)'); 
+            gradient.addColorStop(1,'rgba(0, 100, 0, 0)');
             ctx.save(); ctx.lineTo(last.x, padTop+chartH); ctx.lineTo(start.x, padTop+chartH); ctx.closePath();
             ctx.fillStyle=gradient; ctx.fill(); ctx.restore();
             ctx.beginPath(); ctx.moveTo(start.x, start.y);
@@ -856,7 +857,7 @@
                 ctx.quadraticCurveTo(p1.x, p1.y, midNextX, midNextY);
             }
             ctx.lineTo(last.x, last.y);
-            ctx.strokeStyle='#ff3b3b'; ctx.lineWidth=3; ctx.shadowColor='#ff3b3b'; ctx.shadowBlur=10;
+            ctx.strokeStyle='#006400'; ctx.lineWidth=3; ctx.shadowColor='#006400'; ctx.shadowBlur=10;
             ctx.stroke(); ctx.shadowBlur=0;
         }
 
